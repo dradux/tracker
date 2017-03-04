@@ -4,22 +4,10 @@
 import datetime
 from app import db
 
-
-class Posto(db.Model):
-
-    __tablename__ = 'postos'
-
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String, nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self, text):
-        self.text = text
-        self.date_posted = datetime.datetime.now()
-
 #
 # Extended with example from: https://github.com/flask-admin/flask-admin/blob/master/examples/sqla/app.py
 #
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100))

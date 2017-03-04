@@ -16,7 +16,10 @@ TRTrack is the Test Result Tracker.
 
 ## Setup
 - build containers: `docker-compose build`
-- create db table: `docker-compose run web /usr/local/bin/python create_db.py`
+- create db tables
+  * start db container: `docker-compose up -d postgres`
+  * create tables: `docker-compose run web /usr/local/bin/python create_db.py`
+- load db with data (optional): `docker-compose run web /usr/local/bin/python load_db.py`
 
 
 ## Run
