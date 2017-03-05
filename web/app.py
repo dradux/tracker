@@ -85,6 +85,8 @@ admin.add_view(UserAdmin(User, db.session))
 admin.add_view(sqla.ModelView(Tag, db.session))
 admin.add_view(PostAdmin(db.session))
 admin.add_view(TreeView(Tree, db.session))
+admin.add_view(sqla.ModelView(Server, db.session))
+admin.add_view(sqla.ModelView(TestResult, db.session))
 
 
 if __name__ == '__main__':
