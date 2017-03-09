@@ -1,39 +1,36 @@
-web:
-  restart: always
-  build: ./web
-  expose:
-    - "8000"
-  links:
-    - postgres:postgres
-  volumes:
-    - /usr/src/app/static
-  env_file: .env
-  command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
+version: '2'
 
-nginx:
-  restart: always
-  build: ./nginx/
-  ports:
-    - "80:80"
-  volumes:
-    - /www/static
-  volumes_from:
-    - web
-  links:
-    - web:web
+services:
+    web:
+      #restart: always
+      build: ./web
+      expose:
+        - "8000"
+      depends_on:
+        - postgres
+      volumes:
+        - .:/usr/src/app/static
+      env_file: .env
+      command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
 
-data:
-  # https://hub.docker.com/_/postgres/
-  image: postgres:9.6-alpine
-  volumes:
-    - /var/lib/postgresql
-  command: "true"
+    nginx:
+      #restart: always
+      build: ./nginx/
+      ports:
+        - "80:80"
+      volumes:
+        - /www/static
+      volumes_from:
+        - web
+      depends_on:
+        - web
 
-postgres:
-  restart: always
-  # https://hub.docker.com/_/postgres/
-  image: postgres:9.6-alpine
-  volumes_from:
-    - data
-  ports:
-    - "5432:5432"
+    postgres:
+      #restart: always
+      # https://hub.docker.com/_/postgres/
+      image: postgres:9.6-alpine
+      volumes:
+        - db-volume:/var/lib/postgresql
+
+volumes:
+    db-volume: {}

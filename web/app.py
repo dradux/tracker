@@ -3,90 +3,87 @@
 import sys
 import os
 import os.path as op
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-
-from wtforms import validators
-
+from flask.ext.security import login_required, Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, utils
 import flask_admin as admin
-from flask_admin.contrib import sqla
-from flask_admin.contrib.sqla import filters
-
 from config import BaseConfig
 
 # Create application
 app = Flask(__name__)
 app.config.from_object(BaseConfig)
+app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'W/]TUmc`YX]|<-sr+he&"1M*3{T9|SB|Q'
+app.config['SECURITY_PASSWORD_HASH'] = 'pbkdf2_sha512'
+app.config['SECURITY_PASSWORD_SALT'] = 'mySaltWillGoHERE123A23'
+
 db = SQLAlchemy(app)
 
 from models import *
+from views import *
+
+# Setup Flask-Security
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
+
+@app.before_first_request
+def before_first_request():
+
+    # Create any database tables that don't exist yet.
+    db.create_all()
+
+    # Create the Roles "admin" and "end-user" -- unless they already exist
+    user_datastore.find_or_create_role(name='admin', description='Administrator')
+    user_datastore.find_or_create_role(name='user', description='User')
+
+    # Create two Users for testing purposes -- unless they already exists.
+    # In each case, use Flask-Security utility function to encrypt the password.
+    encrypted_password = utils.encrypt_password('password')
+    if not user_datastore.get_user('user@example.com'):
+        user_datastore.create_user(email='user@example.com', password=encrypted_password)
+    if not user_datastore.get_user('drader@adercon.com'):
+        user_datastore.create_user(email='drader@adercon.com', password=encrypted_password)
+
+    # Commit any database changes; the User and Roles must exist before we can add a Role to the User
+    db.session.commit()
+
+    # Give one User has the "user" role, while the other has the "admin" role. (This will have no effect if the
+    # Users already have these Roles.) Again, commit any database changes.
+    user_datastore.add_role_to_user('user@example.com', 'user')
+    user_datastore.add_role_to_user('drader@adercon.com', 'admin')
+    user_datastore.add_role_to_user('drader@adercon.com', 'user')
+    db.session.commit()
+
 
 # Flask views
+#~ @app.route('/')
+#~ def index():
+    #~ return '<a href="/admin/">To Admin...</a>'
+
+#~ @app.route('/home')
+#~ @login_required
+#~ def home():
+    #~ return render_template('templates/index.html')
+
 @app.route('/')
+@login_required
 def index():
-    return '<a href="/admin/">To Admin...</a>'
-
-
-# Customized User model admin
-class UserAdmin(sqla.ModelView):
-    inline_models = (UserInfo,)
-
-
-# Customized Post model admin
-class PostAdmin(sqla.ModelView):
-    # Visible columns in the list view
-    column_exclude_list = ['text']
-
-    # List of columns that can be sorted. For 'user' column, use User.username as
-    # a column.
-    column_sortable_list = ('title', ('user', 'user.username'), 'date')
-
-    # Rename 'title' columns to 'Post Title' in list view
-    column_labels = dict(title='Post Title')
-
-    column_searchable_list = ('title', User.username, 'tags.name')
-
-    column_filters = ('user',
-                      'title',
-                      'date',
-                      'tags',
-                      filters.FilterLike(Post.title, 'Fixed Title', options=(('test1', 'Test 1'), ('test2', 'Test 2'))))
-
-    # Pass arguments to WTForms. In this case, change label for text field to
-    # be 'Big Text' and add required() validator.
-    form_args = dict(
-                    text=dict(label='Big Text', validators=[validators.required()])
-                )
-
-    form_ajax_refs = {
-        'user': {
-            'fields': (User.username, User.email)
-        },
-        'tags': {
-            'fields': (Tag.name,)
-        }
-    }
-
-    def __init__(self, session):
-        # Just call parent class with predefined model.
-        super(PostAdmin, self).__init__(Post, session)
-
-
-class TreeView(sqla.ModelView):
-    form_excluded_columns = ['children', ]
-
+    return render_template('index.html')
 
 # Create admin
 #admin = admin.Admin(app, name='Example: SQLAlchemy', template_mode='bootstrap3')
-admin = admin.Admin(app, name='TRTrack', template_mode='bootstrap3')
+admin = admin.Admin(app, name='TRTrack', template_mode='bootstrap3', index_view=HomeView(name='Home'))
 
 # Add views
+#~ admin.add_view(sqla.ModelView(User, db.session))
 admin.add_view(UserAdmin(User, db.session))
-admin.add_view(sqla.ModelView(Tag, db.session))
-admin.add_view(PostAdmin(db.session))
-admin.add_view(TreeView(Tree, db.session))
-admin.add_view(sqla.ModelView(Server, db.session))
-admin.add_view(sqla.ModelView(TestResult, db.session))
+#~ admin.add_view(sqla.ModelView(Tag, db.session))
+#~ admin.add_view(PostAdmin(db.session))
+#~ admin.add_view(TreeView(Tree, db.session))
+admin.add_view(ServerView(Server, db.session))
+admin.add_view(TestResultView(TestResult, db.session))
+admin.add_view(HelpView(name='Online Help', endpoint='online-help', category='Help'))
+admin.add_view(HelpView(name='About', endpoint='about', category='Help'))
 
 
 if __name__ == '__main__':

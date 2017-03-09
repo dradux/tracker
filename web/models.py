@@ -1,75 +1,81 @@
 # models.py
-
-
 import datetime
 from app import db
+
+from flask.ext.security import Security, SQLAlchemyUserDatastore, \
+    UserMixin, RoleMixin, login_required
 
 #
 # Extended with example from: https://github.com/flask-admin/flask-admin/blob/master/examples/sqla/app.py
 #
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(100))
-    last_name = db.Column(db.String(100))
-    username = db.Column(db.String(80), unique=True)
-    email = db.Column(db.String(120), unique=True)
+#~ class User(db.Model):
+    #~ __tablename__ = 'ex_user'
+    #~ id = db.Column(db.Integer, primary_key=True)
+    #~ first_name = db.Column(db.String(100))
+    #~ last_name = db.Column(db.String(100))
+    #~ username = db.Column(db.String(80), unique=True)
+    #~ email = db.Column(db.String(120), unique=True)
 
-    def __str__(self):
-        return self.username
+    #~ def __str__(self):
+        #~ return self.username
 
 
 # Create M2M table
-post_tags_table = db.Table('post_tags', db.Model.metadata,
-                           db.Column('post_id', db.Integer, db.ForeignKey('post.id')),
-                           db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'))
-                           )
+#~ post_tags_table = db.Table('post_tags', db.Model.metadata,
+                           #~ db.Column('post_id', db.Integer, db.ForeignKey('ex_post.id')),
+                           #~ db.Column('tag_id', db.Integer, db.ForeignKey('ex_tag.id'))
+                           #~ )
 
 
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120))
-    text = db.Column(db.Text, nullable=False)
-    date = db.Column(db.DateTime)
+#~ class Post(db.Model):
+    #~ __tablename__ = 'ex_post'
+    #~ id = db.Column(db.Integer, primary_key=True)
+    #~ title = db.Column(db.String(120))
+    #~ text = db.Column(db.Text, nullable=False)
+    #~ date = db.Column(db.DateTime)
 
-    user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
-    user = db.relationship(User, backref='posts')
+    #~ user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
+    #~ user = db.relationship(User, backref='ex_posts')
 
-    tags = db.relationship('Tag', secondary=post_tags_table)
+    #~ tags = db.relationship('Tag', secondary=post_tags_table)
 
-    def __str__(self):
-        return self.title
-
-
-class Tag(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Unicode(64))
-
-    def __str__(self):
-        return self.name
+    #~ def __str__(self):
+        #~ return self.title
 
 
-class UserInfo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+#~ class Tag(db.Model):
+    #~ __tablename__ = 'ex_tag'
+    #~ id = db.Column(db.Integer, primary_key=True)
+    #~ name = db.Column(db.Unicode(64))
 
-    key = db.Column(db.String(64), nullable=False)
-    value = db.Column(db.String(64))
-
-    user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
-    user = db.relationship(User, backref='info')
-
-    def __str__(self):
-        return '%s - %s' % (self.key, self.value)
+    #~ def __str__(self):
+        #~ return self.name
 
 
-class Tree(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    parent_id = db.Column(db.Integer, db.ForeignKey('tree.id'))
-    parent = db.relationship('Tree', remote_side=[id], backref='children')
+#~ class UserInfo(db.Model):
+    #~ __tablename__ = 'ex_userinfo'
+    #~ id = db.Column(db.Integer, primary_key=True)
 
-    def __str__(self):
-        return self.name
+    #~ key = db.Column(db.String(64), nullable=False)
+    #~ value = db.Column(db.String(64))
+
+    #~ user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
+    #~ user = db.relationship(User, backref='info')
+
+    #~ def __str__(self):
+        #~ return '%s - %s' % (self.key, self.value)
+
+
+#~ class Tree(db.Model):
+    #~ __tablename__ = 'ex_tree'
+    #~ id = db.Column(db.Integer, primary_key=True)
+    #~ name = db.Column(db.String(64))
+    #~ parent_id = db.Column(db.Integer, db.ForeignKey('ex_tree.id'))
+    #~ parent = db.relationship('Tree', remote_side=[id], backref='children')
+
+    #~ def __str__(self):
+        #~ return self.name
 
 #
 # Test Result Models
@@ -79,9 +85,10 @@ class Server(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     cpu_cores = db.Column(db.Integer, nullable=False)
-    memory = db.Column(db.Numeric(5,1), nullable=False)
     compute_units = db.Column(db.Numeric(5,1), nullable=True)
+    memory = db.Column(db.Numeric(5,1), nullable=False)
     virtual = db.Column(db.Boolean, nullable=False, default=True)
+    storage = db.Column(db.Text, nullable=False)
     notes = db.Column(db.Text, nullable=True)
 
     def __str__(self):
@@ -111,7 +118,7 @@ class TestResult(db.Model):
     run_length = db.Column(db.Integer, nullable=True)
     number_failures = db.Column(db.Integer, nullable=True)
     number_requests = db.Column(db.Integer, nullable=True)
-    average_run_time = db.Column(db.Integer, nullable=True)
+    average_response_time = db.Column(db.Integer, nullable=True)
 
     target_server_cpu = db.Column(db.Numeric(5,2), nullable=True)
     target_server_memory = db.Column(db.Numeric(5,2), nullable=True)
@@ -119,3 +126,40 @@ class TestResult(db.Model):
 
     test_notes = db.Column(db.Text, nullable=True)
 
+    def __str__(self):
+        return '%s (%s)' % (self.test_plan, test_date)
+
+
+#
+# Flask-Security Models
+#
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+    # __str__ is required by Flask-Admin, so we can have human-readable values for the Role when editing a User.
+    # If we were using Python 2.7, this would be __unicode__ instead.
+    def __str__(self):
+        return self.name
+
+    # __hash__ is required to avoid the exception TypeError: unhashable type: 'Role' when saving a User
+    def __hash__(self):
+        return hash(self.name)
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
+    confirmed_at = db.Column(db.DateTime())
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('users', lazy='dynamic'))
+
+    def __str__(self):
+        return '<User id=%s email=%s>' % (self.id, self.email)
