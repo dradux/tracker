@@ -5,14 +5,16 @@ TRTrack is the Test Result Tracker.
 
 ## TODO
 - change web container to use alpine over ONBUILD
-- /get admin piece setup
-- /add authentication
-- /add user to server and test_results data
-- /fix stability issue (for some reason data just goes away)
 - need migrations support
-- /move admin views to views class or dir
+  * /add 'user' to server and test_results models
+  * should we add 'project' structure?
 - final cleanup
-
+- /add appropriate .Dockerignore
+- move configs to config.py file and structure...
+- /add live-reload for flask app code changes
+- /add a 'created_at' dts to test_results
+- move views to individual classes
+- move models to individual classes
 
 ## Stack
 - web: nginx
@@ -24,14 +26,18 @@ TRTrack is the Test Result Tracker.
 - build containers: `docker-compose build`
 - create db tables
   * start db container: `docker-compose up -d postgres`
-  * create tables: `docker-compose run web /usr/local/bin/python create_db.py`
-- load db with data (optional): `docker-compose run web /usr/local/bin/python load_db.py`
+  * create tables: `docker-compose run web python create_db.py`
+- load db with data (optional): `docker-compose run web python load_db.py`
 
 
 ## Run
 - start: `docker-compose up`
 - use: `http://localhost`
 
+## Development
+- init migrations: `docker-compose run web python manage.py db init`
+- create migration: `docker-compose run web python manage.py db migrate`
+- apply migration: `docker-compose run web python manage.py db upgrade`
 
 ## Attribution
 - [dockerize base](https://realpython.com/blog/python/dockerizing-flask-with-compose-and-machine-from-localhost-to-the-cloud/)
@@ -44,3 +50,4 @@ TRTrack is the Test Result Tracker.
 - [https://pythonhosted.org/Flask-Security/quickstart.html](flask-security)
 - [http://flask-admin.readthedocs.io/en/latest/introduction/](flask-admin intro)
 - [http://examples.flask-admin.org/](flask-admin examples)
+- [https://realpython.com/blog/python/flask-by-example-part-2-postgres-sqlalchemy-and-alembic/] - migrations setup and usage guide

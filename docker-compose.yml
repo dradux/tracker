@@ -9,9 +9,13 @@ services:
       depends_on:
         - postgres
       volumes:
-        - .:/usr/src/app/static
+        - ./web:/usr/src/app
+        # - ./web/static:/usr/src/app/static
+        # - ./web/migrations:/usr/src/app/migrations
       env_file: .env
-      command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
+      # command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
+      # command: /usr/local/bin/gunicorn -w 2 -b :8000 --log-level=DEBUG app:app
+      command: /usr/local/bin/gunicorn -w 2 -b :8000 --reload app:app
 
     nginx:
       #restart: always
