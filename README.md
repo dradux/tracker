@@ -3,13 +3,6 @@
 TRacker is the Test Result Tracker!
 
 
-## TODO
-- change web container to use alpine over ONBUILD \
-
-
-## Completed Tasks \
-
-
 ## Stack
 - web: nginx
 - app: flask + admin, gunicorn, sqlalchemy
