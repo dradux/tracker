@@ -1,3 +1,5 @@
+# views.py
+
 from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla import filters
 from flask.ext.admin import Admin, BaseView, expose, AdminIndexView
@@ -8,71 +10,20 @@ from wtforms.fields import PasswordField
 from jinja2 import Markup
 from flask import url_for
 
-# Customized User model admin
-#~ class UserAdmin(sqla.ModelView):
-    #~ inline_models = (UserInfo,)
-
-
-# Customized Post model admin
-#~ class PostAdmin(sqla.ModelView):
-    #~ # Visible columns in the list view
-    #~ column_exclude_list = ['text']
-
-    #~ # List of columns that can be sorted. For 'user' column, use User.username as
-    #~ # a column.
-    #~ column_sortable_list = ('title', ('user', 'user.username'), 'date')
-
-    #~ # Rename 'title' columns to 'Post Title' in list view
-    #~ column_labels = dict(title='Post Title')
-
-    #~ column_searchable_list = ('title', User.username, 'tags.name')
-
-    #~ column_filters = ('user',
-                      #~ 'title',
-                      #~ 'date',
-                      #~ 'tags',
-                      #~ filters.FilterLike(Post.title, 'Fixed Title', options=(('test1', 'Test 1'), ('test2', 'Test 2'))))
-
-    #~ # Pass arguments to WTForms. In this case, change label for text field to
-    #~ # be 'Big Text' and add required() validator.
-    #~ form_args = dict(
-                    #~ text=dict(label='Big Text', validators=[validators.required()])
-                #~ )
-
-    #~ form_ajax_refs = {
-        #~ 'user': {
-            #~ 'fields': (User.username, User.email)
-        #~ },
-        #~ 'tags': {
-            #~ 'fields': (Tag.name,)
-        #~ }
-    #~ }
-
-    #~ def __init__(self, session):
-        #~ # Just call parent class with predefined model.
-        #~ super(PostAdmin, self).__init__(Post, session)
-
-
-#~ class TreeView(sqla.ModelView):
-    #~ form_excluded_columns = ['children', ]
-
 class HomeView(AdminIndexView):
     @expose('/')
     def index(self):
         return self.render('home.html')
 
-class HelpView(BaseView):
+class OnlineHelpView(BaseView):
     @expose('/')
     def index(self):
-        return self.render('help.html')
+        return self.render('help-online.html')
 
-    @expose('/online-help')
-    def helpOnline(self):
-        return self.render('help.html')
-
-    @expose('/about')
-    def helpAbout(self):
-        return self.render('about.html')
+class AboutView(BaseView):
+    @expose('/')
+    def index(self):
+        return self.render('help-about.html')
 
 # Customized User model for SQL-Admin
 class UserAdmin(sqla.ModelView):

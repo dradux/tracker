@@ -1,7 +1,18 @@
 {% extends 'admin/master.html' %}
 {% block body %}
-    <h3>Welcome to TRTrack, the Test Result Tracker!</h3>
+    <h3>Welcome to TRTrack</h3>
+    <div style="font-style: italic; ">
+        {% if not current_user.id %}
+            You must <a href="/">login</a> to use this app.
+        {% endif %}
+        {% if current_user.id %}
+            Click <a href="/logout">here</a> to log out.
+        {% endif %}
+    </div>
     <br />
-    <br />
-    Please be patient as the app gets built out...
+    Please observe the following guidelines while using this app:
+    <ul>
+        <li>search and reuse servers, do not create new servers if the server already exists</li>
+        <li>try to enter as much detail for a test result as possible</li>
+    </ul>
 {% endblock %}

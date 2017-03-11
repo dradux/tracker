@@ -1,11 +1,11 @@
-# create_db.py
+#~ # create_db.py
 
-import sys
+#~ import sys
 
-#from app import db
-from app import *
+#~ #from app import db
+#~ from app import *
 
-# db.drop_all()
-db.create_all()
+#~ # db.drop_all()
+#~ db.create_all()
 
-sys.exit()
+#~ sys.exit()

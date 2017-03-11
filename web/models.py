@@ -1,81 +1,10 @@
 # models.py
+
 import datetime
 from app import db
 
-from flask.ext.security import Security, SQLAlchemyUserDatastore, \
-    UserMixin, RoleMixin, login_required
-
-#
-# Extended with example from: https://github.com/flask-admin/flask-admin/blob/master/examples/sqla/app.py
-#
-
-#~ class User(db.Model):
-    #~ __tablename__ = 'ex_user'
-    #~ id = db.Column(db.Integer, primary_key=True)
-    #~ first_name = db.Column(db.String(100))
-    #~ last_name = db.Column(db.String(100))
-    #~ username = db.Column(db.String(80), unique=True)
-    #~ email = db.Column(db.String(120), unique=True)
-
-    #~ def __str__(self):
-        #~ return self.username
-
-
-# Create M2M table
-#~ post_tags_table = db.Table('post_tags', db.Model.metadata,
-                           #~ db.Column('post_id', db.Integer, db.ForeignKey('ex_post.id')),
-                           #~ db.Column('tag_id', db.Integer, db.ForeignKey('ex_tag.id'))
-                           #~ )
-
-
-#~ class Post(db.Model):
-    #~ __tablename__ = 'ex_post'
-    #~ id = db.Column(db.Integer, primary_key=True)
-    #~ title = db.Column(db.String(120))
-    #~ text = db.Column(db.Text, nullable=False)
-    #~ date = db.Column(db.DateTime)
-
-    #~ user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
-    #~ user = db.relationship(User, backref='ex_posts')
-
-    #~ tags = db.relationship('Tag', secondary=post_tags_table)
-
-    #~ def __str__(self):
-        #~ return self.title
-
-
-#~ class Tag(db.Model):
-    #~ __tablename__ = 'ex_tag'
-    #~ id = db.Column(db.Integer, primary_key=True)
-    #~ name = db.Column(db.Unicode(64))
-
-    #~ def __str__(self):
-        #~ return self.name
-
-
-#~ class UserInfo(db.Model):
-    #~ __tablename__ = 'ex_userinfo'
-    #~ id = db.Column(db.Integer, primary_key=True)
-
-    #~ key = db.Column(db.String(64), nullable=False)
-    #~ value = db.Column(db.String(64))
-
-    #~ user_id = db.Column(db.Integer(), db.ForeignKey(User.id))
-    #~ user = db.relationship(User, backref='info')
-
-    #~ def __str__(self):
-        #~ return '%s - %s' % (self.key, self.value)
-
-
-#~ class Tree(db.Model):
-    #~ __tablename__ = 'ex_tree'
-    #~ id = db.Column(db.Integer, primary_key=True)
-    #~ name = db.Column(db.String(64))
-    #~ parent_id = db.Column(db.Integer, db.ForeignKey('ex_tree.id'))
-    #~ parent = db.relationship('Tree', remote_side=[id], backref='children')
-
-    #~ def __str__(self):
-        #~ return self.name
+#~ from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
+from flask.ext.security import UserMixin, RoleMixin
 
 #
 # Test Result Models
@@ -105,8 +34,6 @@ class TestResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     test_date = db.Column(db.DateTime, nullable=False)
     test_plan = db.Column(db.String(200), nullable=False)
-    #test_source = db.Column(db.String(100), nullable=False)
-    #test_target = db.Column(db.String(100), nullable=False)
 
     source_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=False)
     source_server = db.relationship("Server", foreign_keys=[source_server_id])

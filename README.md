@@ -5,16 +5,9 @@ TRTrack is the Test Result Tracker.
 
 ## TODO
 - change web container to use alpine over ONBUILD
-- need migrations support
-  * /add 'user' to server and test_results models
-  * should we add 'project' structure?
 - final cleanup
-- /add appropriate .Dockerignore
 - move configs to config.py file and structure...
-- /add live-reload for flask app code changes
-- /add a 'created_at' dts to test_results
-- move views to individual classes
-- move models to individual classes
+- fix help:about
 
 ## Stack
 - web: nginx
@@ -24,11 +17,6 @@ TRTrack is the Test Result Tracker.
 
 ## Setup
 - build containers: `docker-compose build`
-- create db tables
-  * start db container: `docker-compose up -d postgres`
-  * create tables: `docker-compose run web python create_db.py`
-- load db with data (optional): `docker-compose run web python load_db.py`
-
 
 ## Run
 - start: `docker-compose up`
