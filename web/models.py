@@ -3,12 +3,9 @@
 import datetime
 from app import db
 
-#~ from flask.ext.security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 from flask.ext.security import UserMixin, RoleMixin
 
-#
-# Test Result Models
-#
+
 class Server(db.Model):
     __tablename__ = 'server'
     id = db.Column(db.Integer, primary_key=True)

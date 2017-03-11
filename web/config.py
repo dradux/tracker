@@ -1,7 +1,7 @@
 # config.py
 
-
 import os
+# from common.constants import INSTANCE_FOLDER_PATH
 
 
 class BaseConfig(object):
@@ -15,14 +15,14 @@ class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = 'postgresql://{0}:{1}@{2}:{3}/{4}'.format(
         DB_USER, DB_PASS, DB_SERVICE, DB_PORT, DB_NAME
     )
+    SECRET_KEY = os.environ['SECRET_KEY']
+    SECURITY_PASSWORD_HASH = os.environ['SECURITY_PASSWORD_HASH']
+    SECURITY_PASSWORD_SALT = os.environ['SECURITY_PASSWORD_SALT']
+    DEFAULT_ADMIN_USER = os.environ['DEFAULT_ADMIN_USER']
+    DEFAULT_ADMIN_PASSWORD = os.environ['DEFAULT_ADMIN_PASSWORD']
 
+class DefaultConfig(BaseConfig):
 
-# class BaseConfig(object):
-#     SECRET_KEY = 'hi'
-#     DEBUG = True
-#     DB_NAME = 'postgres'
-#     DB_SERVICE = 'localhost'
-#     DB_PORT = 5432
-#     SQLALCHEMY_DATABASE_URI = 'postgresql://{0}:{1}/{2}'.format(
-#         DB_SERVICE, DB_PORT, DB_NAME
-#     )
+   # Statement for enabling the development environment
+   #DEBUG = True
+   pass

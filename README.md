@@ -4,10 +4,12 @@ TRTrack is the Test Result Tracker.
 
 
 ## TODO
-- change web container to use alpine over ONBUILD
-- final cleanup
-- move configs to config.py file and structure...
-- fix help:about
+- change web container to use alpine over ONBUILD \
+
+## Completed Tasks
+- final cleanup \
+- /move configs to config.py file \
+- /fix login flash \
 
 ## Stack
 - web: nginx
