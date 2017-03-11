@@ -59,7 +59,7 @@ def index():
     return render_template('index.html')
 
 # Create admin
-admin = admin.Admin(app, name='TRTrack', template_mode='bootstrap3', index_view=HomeView(name='Home'))
+admin = admin.Admin(app, name='TRacker', template_mode='bootstrap3', index_view=HomeView(name='Home'))
 
 # Add views
 admin.add_view(UserAdmin(User, db.session))

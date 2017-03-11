@@ -24,7 +24,7 @@
 </style>
 <div id="loginbox" >
 {% include "security/_messages.html" %}
-<h1>TRTrack Login</h1>
+<h1>TRacker Login</h1>
 <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
   {{ login_user_form.hidden_tag() }}
   {{ render_field_with_errors(login_user_form.email) }}

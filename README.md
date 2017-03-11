@@ -1,15 +1,14 @@
 # README.md
 
-TRTrack is the Test Result Tracker.
+TRacker is the Test Result Tracker!
 
 
 ## TODO
 - change web container to use alpine over ONBUILD \
 
-## Completed Tasks
-- final cleanup \
-- /move configs to config.py file \
-- /fix login flash \
+
+## Completed Tasks \
+
 
 ## Stack
 - web: nginx
