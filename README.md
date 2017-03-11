@@ -12,18 +12,22 @@ TRacker is the Test Result Tracker!
 ## Setup
 - build containers: `docker-compose build`
 
+
 ## Run
 - start: `docker-compose up`
 - use: `http://localhost`
+
 
 ## Development
 - init migrations: `docker-compose run web python manage.py db init`
 - create migration: `docker-compose run web python manage.py db migrate`
 - apply migration: `docker-compose run web python manage.py db upgrade`
 
+
 ## Attribution
 - [dockerize base](https://realpython.com/blog/python/dockerizing-flask-with-compose-and-machine-from-localhost-to-the-cloud/)
 - [flask-admin base](https://github.com/flask-admin/flask-admin/blob/master/examples/sqla/app.py)
+
 
 ## Links
 - [https://github.com/mrjoes/flask-admin/blob/master/doc/quickstart.rst](flask-admin quickstart)

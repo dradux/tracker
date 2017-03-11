@@ -168,7 +168,7 @@ class TestResultView(sqla.ModelView):
         'source_server': _source_server_formatter,
     }
 
-    form_excluded_columns = ('created_at','creator_id')
+    form_excluded_columns = ('created_at','creator_id', 'creator')
 
     column_searchable_list = ['test_plan']
     column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time']
