@@ -11,6 +11,7 @@ TRacker is the Test Result Tracker!
 
 ## Setup
 - build containers: `docker-compose build`
+- apply latest db updates: `docker-compose run web python manage.py db upgrade`
 
 
 ## Run

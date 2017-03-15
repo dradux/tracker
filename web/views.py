@@ -145,6 +145,75 @@ class ServerView(sqla.ModelView):
             model.creator_id = current_user.id
 
 
+class TestPlanView(sqla.ModelView):
+
+    # require user role.
+    def is_accessible(self):
+        return current_user.has_role('user')
+
+    can_delete = False
+    page_size = 20
+
+    column_searchable_list = ['name']
+    column_editable_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes',]
+    column_filters = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes',]
+
+    column_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes', 'creator']
+    column_labels = dict(source_url='Source')
+
+    form_excluded_columns = ('creator_id')
+
+    create_modal = True
+    edit_modal = True
+
+    can_export = True
+
+    form_args = {
+        'source_url': {
+            'label': 'Source'
+        },
+    }
+
+    form_widget_args = {
+        'name': {
+            'placeholder': 'test plan name',
+        },
+        'version': {
+            #'style': 'width: 50px',
+            'placeholder': 'version',
+            'title': 'test script version (e.g. 1.0.0, 1.0.1, etc.)',
+        },
+        'source_url': {
+            #'style': 'width: 77px',
+            'placeholder': 'url to source of test script',
+            'title': 'url to version control (or other) location of test script',
+        },
+        'summary': {
+            #'style': 'width: 77px',
+            'placeholder': 'brief summary of test script',
+            'title': 'a brief summary of the test script',
+        },
+        'description': {
+            #'style': 'width: 25px',
+            'placeholder': 'detailed description of test script',
+            'title': 'a detailed description of the test script',
+        },
+        'run_info': {
+            'placeholder': 'info needed to run the script',
+            'title': 'all info needed to run the script such as variables or properties that need to be set',
+        },
+        'notes': {
+            'placeholder': 'notes regarding test script',
+            'title': 'any notes or additional detail about the test script',
+        }
+    }
+
+    def on_model_change(self, form, model, is_created):
+
+        if is_created:
+            model.creator_id = current_user.id
+
+
 class TestResultView(sqla.ModelView):
 
     def is_accessible(self):
@@ -154,6 +223,8 @@ class TestResultView(sqla.ModelView):
         return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.target_server.id), model.target_server.name)) if model.target_server else ""
     def _source_server_formatter(view, context, model, name):
         return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.source_server.id), model.source_server.name)) if model.source_server else ""
+    def _test_plan_formatter(view, context, model, name):
+        return Markup("<a href='%s'>%s</a>" % (url_for('test_plan.edit_view', id=model.test_plan.id), model.test_plan.name)) if model.test_plan else ""
 
     can_delete = False
     page_size = 50
@@ -161,18 +232,21 @@ class TestResultView(sqla.ModelView):
 
     column_exclude_list = ['app_version','ramp_up','number_requests','target_server_cpu','target_server_memory','target_server_load','test_notes',]
     column_list = ['test_date','target_server', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'source_server', 'creator', 'created_at']
+    #~ column_list = ['test_date','target_server', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'source_server', 'creator', 'created_at']
     column_labels = dict(target_server='Target', number_users='# Users', number_failures='# Fail', average_response_time='ART', source_server='Source')
     #column_formatters = dict(target_server='target_server.name')
     column_formatters = {
+        #'test_plan': _test_plan_formatter,
         'target_server': _target_server_formatter,
         'source_server': _source_server_formatter,
     }
 
     form_excluded_columns = ('created_at','creator_id', 'creator')
 
-    column_searchable_list = ['test_plan']
+    column_searchable_list = ['test_plan.name']
     column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time']
-    column_filters = ['test_plan', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
+    column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
+    #~ column_filters = ['test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
 
 
     create_modal = True
@@ -208,9 +282,9 @@ class TestResultView(sqla.ModelView):
         'test_date': {
             'placeholder': 'date/time test was started',
         },
-        'test_plan': {
-            'placeholder': 'name of test plan executed',
-        },
+        #~ 'test_plan': {
+            #~ 'placeholder': 'name of test plan executed',
+        #~ },
         'app_version': {
             'placeholder': 'version of application',
         },

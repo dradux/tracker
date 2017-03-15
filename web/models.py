@@ -26,11 +26,32 @@ class Server(db.Model):
             fmt_compute_units='%scu/' % (self.compute_units)
         return '%s (%scores/%s%smemory)' % (self.name, self.cpu_cores, fmt_compute_units, self.memory)
 
+
+class TestPlan(db.Model):
+    __tablename__ = 'test_plan'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    version = db.Column(db.String(10), nullable=False)
+    source_url = db.Column(db.String, nullable=False)
+    summary = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    run_info = db.Column(db.Text, nullable=False)
+    notes = db.Column(db.Text, nullable=True)
+
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    creator = db.relationship("User", foreign_keys=[creator_id])
+
+    def __str__(self):
+        # chem4 (v1.0.0)
+        return '%s (v%s)' % (self.name, self.version)
+
 class TestResult(db.Model):
     __tablename__ = 'test_result'
     id = db.Column(db.Integer, primary_key=True)
     test_date = db.Column(db.DateTime, nullable=False)
-    test_plan = db.Column(db.String(200), nullable=False)
+
+    test_plan_id = db.Column(db.Integer(), db.ForeignKey('test_plan.id'), nullable=True)
+    test_plan = db.relationship("TestPlan", foreign_keys=[test_plan_id])
 
     source_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=False)
     source_server = db.relationship("Server", foreign_keys=[source_server_id])

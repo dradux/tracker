@@ -64,6 +64,7 @@ admin = admin.Admin(app, name='TRacker', template_mode='bootstrap3', index_view=
 # Add views
 admin.add_view(UserAdmin(User, db.session))
 admin.add_view(ServerView(Server, db.session))
+admin.add_view(TestPlanView(TestPlan, db.session))
 admin.add_view(TestResultView(TestResult, db.session))
 admin.add_view(OnlineHelpView(name='Online Help', endpoint='online_help', category='Help'))
 admin.add_view(AboutView(name='About', endpoint='help_about', category='Help'))
