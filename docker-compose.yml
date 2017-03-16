@@ -11,6 +11,7 @@ services:
       volumes:
         - ./web:/usr/src/app
       env_file: .env
+
       # for production/normal
       command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
       # for debugging
@@ -19,7 +20,10 @@ services:
       #command: /usr/local/bin/gunicorn -w 2 -b :8000 --reload app:app
 
     nginx:
-      build: ./nginx/
+      build:
+        context: ./nginx/
+        args:
+          SERVER_URL: ${SERVER_URL}
       ports:
         - "80:80"
         - "443:443"

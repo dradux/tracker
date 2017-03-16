@@ -16,9 +16,11 @@ TRacker is the Test Result Tracker!
 
 
 ## Setup
+- generate or deploy SSL Certs (see HTTPS section below)
+- copy the `.env.template` to `.env` and edit accordingly
 - build containers: `docker-compose build`
 - apply latest db updates: `docker-compose run web python manage.py db upgrade`
-- generate or deploy SSL Certs (see HTTPS section below)
+
 
 
 ## Run
