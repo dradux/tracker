@@ -81,7 +81,12 @@ class ServerView(sqla.ModelView):
     def is_accessible(self):
         return current_user.has_role('user')
 
-    can_delete = False
+    def _handle_view(self, name,**kwargs):
+        if current_user.has_role('admin'):
+            self.can_delete = True
+        else:
+            self.can_delete = False
+
     page_size = 20
 
     column_searchable_list = ['name']
@@ -151,6 +156,12 @@ class TestPlanView(sqla.ModelView):
     def is_accessible(self):
         return current_user.has_role('user')
 
+    def _handle_view(self, name,**kwargs):
+        if current_user.has_role('admin'):
+            self.can_delete = True
+        else:
+            self.can_delete = False
+
     can_delete = False
     page_size = 20
 
@@ -218,6 +229,12 @@ class TestResultView(sqla.ModelView):
 
     def is_accessible(self):
         return current_user.has_role('user')
+
+    def _handle_view(self, name,**kwargs):
+        if current_user.has_role('admin'):
+            self.can_delete = True
+        else:
+            self.can_delete = False
 
     def _target_server_formatter(view, context, model, name):
         return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.target_server.id), model.target_server.name)) if model.target_server else ""
