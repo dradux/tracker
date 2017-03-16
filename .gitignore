@@ -6,5 +6,6 @@ __pycache__
 blog_old.md
 .env
 
-nginx/logs/*
-nginx/ssl/*
+nginx/logs/*.log
+nginx/ssl/*.crt
+nginx/ssl/*.key
