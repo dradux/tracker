@@ -26,32 +26,34 @@ from views import *
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
-@app.before_first_request
-def before_first_request():
-    # Create any database tables that don't exist yet.
-    db.create_all()
+#~ @TODO: find a better way as the following causes issues with flex-migrate.
+#~
+#~ @app.before_first_request
+#~ def before_first_request():
+    #~ # Create any database tables that don't exist yet.
+    #~ db.create_all()
 
-    #app.logger.info('### NOTICES ###')
-    app.logger.debug('* setting DEFAULT_ADMIN_USER: %s' % (Config.DefaultConfig.DEFAULT_ADMIN_USER))
-    app.logger.debug('* setting DEFAULT_ADMIN_PASSWORD: %s' % (Config.DefaultConfig.DEFAULT_ADMIN_PASSWORD))
+    #~ #app.logger.info('### NOTICES ###')
+    #~ app.logger.debug('* setting DEFAULT_ADMIN_USER: %s' % (Config.DefaultConfig.DEFAULT_ADMIN_USER))
+    #~ app.logger.debug('* setting DEFAULT_ADMIN_PASSWORD: %s' % (Config.DefaultConfig.DEFAULT_ADMIN_PASSWORD))
 
-    # Create the Roles "admin" and "user" -- unless they already exist
-    user_datastore.find_or_create_role(name='admin', description='Administrator')
-    user_datastore.find_or_create_role(name='user', description='User')
+    #~ # Create the Roles "admin" and "user" -- unless they already exist
+    #~ user_datastore.find_or_create_role(name='admin', description='Administrator')
+    #~ user_datastore.find_or_create_role(name='user', description='User')
 
-    encrypted_password = utils.encrypt_password(Config.DefaultConfig.DEFAULT_ADMIN_PASSWORD)
-    app.logger.debug('- encrypted_password: %s' % (encrypted_password))
-    if not user_datastore.get_user(Config.DefaultConfig.DEFAULT_ADMIN_USER):
-        user_datastore.create_user(name='admin', username='admin', email=Config.DefaultConfig.DEFAULT_ADMIN_USER, password=encrypted_password)
+    #~ encrypted_password = utils.encrypt_password(Config.DefaultConfig.DEFAULT_ADMIN_PASSWORD)
+    #~ app.logger.debug('- encrypted_password: %s' % (encrypted_password))
+    #~ if not user_datastore.get_user(Config.DefaultConfig.DEFAULT_ADMIN_USER):
+        #~ user_datastore.create_user(name='admin', username='admin', email=Config.DefaultConfig.DEFAULT_ADMIN_USER, password=encrypted_password)
 
-    # Commit any database changes; the User and Roles must exist before we can add a Role to the User
-    db.session.commit()
+    #~ # Commit any database changes; the User and Roles must exist before we can add a Role to the User
+    #~ db.session.commit()
 
-    # assign roles
-    user_datastore.add_role_to_user(Config.DefaultConfig.DEFAULT_ADMIN_USER, 'admin')
-    user_datastore.add_role_to_user(Config.DefaultConfig.DEFAULT_ADMIN_USER, 'user')
+    #~ # assign roles
+    #~ user_datastore.add_role_to_user(Config.DefaultConfig.DEFAULT_ADMIN_USER, 'admin')
+    #~ user_datastore.add_role_to_user(Config.DefaultConfig.DEFAULT_ADMIN_USER, 'user')
 
-    db.session.commit()
+    #~ db.session.commit()
 
 @app.route('/')
 @login_required

@@ -50,7 +50,7 @@ class TestResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     test_date = db.Column(db.DateTime, nullable=False)
 
-    test_plan_id = db.Column(db.Integer(), db.ForeignKey('test_plan.id'), nullable=True)
+    test_plan_id = db.Column(db.Integer(), db.ForeignKey('test_plan.id'), nullable=False)
     test_plan = db.relationship("TestPlan", foreign_keys=[test_plan_id])
 
     source_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=False)
