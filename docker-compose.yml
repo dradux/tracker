@@ -13,11 +13,12 @@ services:
       env_file: .env
 
       # for production/normal
-      command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
+      #command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
       # for debugging
       # command: /usr/local/bin/gunicorn -w 2 -b :8000 --log-level=DEBUG app:app
       # for 'live/hot reload'
       #command: /usr/local/bin/gunicorn -w 2 -b :8000 --reload app:app
+      command: /usr/local/bin/gunicorn -w 2 -b :8000 ${ADDITIONAL_GUNICORN_OPTIONS} app:app
 
     nginx:
       build:
