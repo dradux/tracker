@@ -1,0 +1,45 @@
+#!/bin/bash
+# 2017-03-18 : drad
+# hourly/daily backup of database via pg_dumpall (default to hourly).
+# note: to restore dump use something like: xzcat backups/psql.bak.xz | psql db
+
+daily="$1"          # use 'daily' to trigger daily backup.
+s3enabled="false"   # true|false: if enabled backup is copied to s3 bucket.
+
+s3bucket="s3://devops.backups.production/sw5/db"
+export_dir="/backups/db"
+
+### no need to config below here ###
+dbdump_file="full-db-$(date +'%H%M').dmp.xz"
+dayofweek="$(date +'%a')"
+db_dump=${export_dir}/hourly/${dbdump_file}
+
+echo "creating db dump: ${db_dump}"
+#pg_dumpall -h postgres -p 5432 -U postgres | xz -3 > /backups/full-db-$(date +'%H%M').dmp.xz
+pg_dumpall -h postgres -p 5432 -U postgres | xz -3 > ${db_dump}
+echo "db dump complete, dump file: ${db_dump}"
+
+if [ "${s3enabled}" == "true" ]; then
+  echo "copy dump to S3..."
+  aws s3 cp --quiet ${export_dir}/hourly/${dbdump_file} ${s3bucket}/hourly/${dbdump_file}
+  echo "completed copy dump to S3: ${s3bucket}/hourly/${dbdump_file}"
+else
+  echo "notice: s3 copy not enabled..."
+fi
+
+if [ "${daily}" == "daily" ]; then
+  echo "* notice: daily flag specified..."
+  echo "copying current dump to daily directory..."
+  cp ${export_dir}/hourly/${dbdump_file} ${export_dir}/daily/${dayofweek}-${dbdump_file}
+  echo "completed copying current dump to daily directory: ${export_dir}/daily/${dayofweek}-${dbdump_file}"
+
+  if [ "${s3enabled}" == "true" ]; then
+    echo "copy daily dump to S3..."
+    aws s3 cp --quiet ${export_dir}/daily/${dayofweek}-${dbdump_file} ${s3bucket}/daily/${dayofweek}-${dbdump_file}
+    echo "completed copy daily dump to S3: ${s3bucket}/daily/${dayofweek}-${dbdump_file}"
+  else
+    echo "notice: s3 copy not enabled..."
+  fi
+fi
+
+echo "script complete."

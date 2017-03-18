@@ -9,3 +9,6 @@ blog_old.md
 nginx/logs/*.log
 nginx/ssl/*.crt
 nginx/ssl/*.key
+
+db/backups/*.dmp
+db/backups/*.xz

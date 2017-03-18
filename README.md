@@ -7,7 +7,7 @@ TRacker is the Test Result Tracker!
 - add "type" column to test plan (e.g. jmeter, locust, etc.)
 - add logic that introspects the test plan and grabs summary, details, run info, etc. if possible
 - add db backups
-
+  * I think the best way to do this is to have another container that just does the backup
 
 ## Stack
 - web: nginx

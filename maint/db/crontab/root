@@ -1,0 +1,17 @@
+# Minute (0-59) Hour (0-23) Day of Month (1-31) Month (1-12 or Jan-Dec) Day of Week (0-6 or Sun-Sat) Command
+#   notice: append >/dev/null [e.g. Command >/dev/null] to discard standard output, only showing error output
+#   notice: append >/dev/null 2>&1 [e.g. Command >/dev/null 2>&1] to discard all output
+#   example: 0 0 * * * cleanup.sh >/dev/null   #run cleanup.sh every day at midnight.
+# Mi Hr Dm Mo Wd Cm
+#  00,15,30,45 * * * *  /home/drad/bin/net_dirs2 --mount >/dev/null
+
+
+# */5 * * * *   /opt/bin/backup_database >/dev/null
+
+# run "hourly" backup every 6 hours.
+#0 06,12,18 * * *   /opt/bin/backup_database >/dev/null
+0 12,18,20,22 * * *   /opt/bin/backup_database >/dev/null
+
+# run "daily" backup once a day.
+#0 00 * * *   /opt/bin/backup_database daily >/dev/null
+0 15 * * *   /opt/bin/backup_database daily >/dev/null

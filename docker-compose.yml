@@ -41,5 +41,12 @@ services:
       volumes:
         - db-volume:/var/lib/postgresql
 
+    maint:
+      build: ./maint
+      volumes:
+        - ./maint/backups:/backups/
+      volumes_from:
+        - postgres
+
 volumes:
     db-volume: {}
