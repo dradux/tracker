@@ -10,5 +10,5 @@ nginx/logs/*.log
 nginx/ssl/*.crt
 nginx/ssl/*.key
 
-db/backups/*.dmp
-db/backups/*.xz
+maint/backups/db/daily/*.xz
+maint/backups/db/hourly/*.xz

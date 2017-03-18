@@ -10,7 +10,7 @@ s3bucket="s3://devops.backups.production/sw5/db"
 export_dir="/backups/db"
 
 ### no need to config below here ###
-dbdump_file="full-db-$(date +'%H%M').dmp.xz"
+dbdump_file="tracker-full-db-$(date +'%H%M').dmp.xz"
 dayofweek="$(date +'%a')"
 db_dump=${export_dir}/hourly/${dbdump_file}
 
