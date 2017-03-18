@@ -88,20 +88,19 @@ class ServerView(sqla.ModelView):
             self.can_delete = False
 
     page_size = 20
-
-    column_searchable_list = ['name']
-    column_editable_list = ['name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'storage', 'notes']
-    column_filters = ['name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'creator.username', 'creator.name', 'creator.email',]
-
-    column_list = ['name', 'cpu_cores', 'compute_units', 'memory', 'virtual', 'storage', 'notes', 'creator']
-    column_labels = dict(cpu_cores='CPU Cores')
-
-    form_excluded_columns = ('creator_id')
-
+    can_view_details = True
     create_modal = True
     edit_modal = True
-
+    details_modal = True
     can_export = True
+
+    column_searchable_list = ['name']
+    column_filters = ['name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'creator.username', 'creator.name', 'creator.email',]
+    column_editable_list = ['name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'storage', 'notes']
+    column_list = ['name', 'cpu_cores', 'compute_units', 'memory', 'virtual', 'storage', 'notes', 'creator']
+    column_exclude_list = ['storage', 'notes']
+    column_labels = dict(cpu_cores='CPU Cores')
+    form_excluded_columns = ('creator_id')
 
     form_args = {
         'cpu_cores': {
@@ -162,22 +161,20 @@ class TestPlanView(sqla.ModelView):
         else:
             self.can_delete = False
 
-    can_delete = False
+    can_view_details = True
+    create_modal = True
+    edit_modal = True
+    details_modal = True
+    can_export = True
     page_size = 20
 
     column_searchable_list = ['name']
-    column_editable_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes',]
     column_filters = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes',]
-
+    column_editable_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes',]
     column_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes', 'creator']
+    column_exclude_list = ['description', 'run_info', 'notes']
     column_labels = dict(source_url='Source')
-
     form_excluded_columns = ('creator_id')
-
-    create_modal = True
-    edit_modal = True
-
-    can_export = True
 
     form_args = {
         'source_url': {
@@ -243,32 +240,27 @@ class TestResultView(sqla.ModelView):
     def _test_plan_formatter(view, context, model, name):
         return Markup("<a href='%s'>%s</a>" % (url_for('test_plan.edit_view', id=model.test_plan.id), model.test_plan.name)) if model.test_plan else ""
 
-    can_delete = False
     page_size = 50
     can_view_details = True
+    create_modal = True
+    edit_modal = True
+    details_modal = True
+    can_export = True
 
+    column_searchable_list = ['test_plan.name']
+    column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
+    #~ column_filters = ['test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
+    column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time']
+    column_list = ['test_date', 'test_plan', 'number_users', 'app_version', 'ramp_up', 'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server', 'target_server_cpu', 'target_server_memory', 'target_server_load', 'source_server', 'creator']
     column_exclude_list = ['app_version','ramp_up','number_requests','target_server_cpu','target_server_memory','target_server_load','test_notes',]
-    column_list = ['test_date','target_server', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'source_server', 'creator']
     column_labels = dict(target_server='Target', number_users='# Users', number_failures='# Fail', average_response_time='ART', source_server='Source')
+    form_excluded_columns = ('created_at','creator_id', 'creator')
     #column_formatters = dict(target_server='target_server.name')
     column_formatters = {
         #'test_plan': _test_plan_formatter,
         'target_server': _target_server_formatter,
         'source_server': _source_server_formatter,
     }
-
-    form_excluded_columns = ('created_at','creator_id', 'creator')
-
-    column_searchable_list = ['test_plan.name']
-    column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time']
-    column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
-    #~ column_filters = ['test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
-
-
-    create_modal = True
-    edit_modal = True
-
-    can_export = True
 
     form_args = {
         'number_users': {
