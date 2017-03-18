@@ -248,8 +248,7 @@ class TestResultView(sqla.ModelView):
     can_view_details = True
 
     column_exclude_list = ['app_version','ramp_up','number_requests','target_server_cpu','target_server_memory','target_server_load','test_notes',]
-    column_list = ['test_date','target_server', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'source_server', 'creator', 'created_at']
-    #~ column_list = ['test_date','target_server', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'source_server', 'creator', 'created_at']
+    column_list = ['test_date','target_server', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'source_server', 'creator']
     column_labels = dict(target_server='Target', number_users='# Users', number_failures='# Fail', average_response_time='ART', source_server='Source')
     #column_formatters = dict(target_server='target_server.name')
     column_formatters = {
