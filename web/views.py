@@ -263,13 +263,13 @@ class TestResultView(sqla.ModelView):
 
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
-                      'target_server.name',]
+                      'target_server.name','run_by.name']
     column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time']
-    column_list = ['test_date', 'test_plan', 'number_users', 'app_version', 'ramp_up', 'run_length', 'number_failures', 'number_requests',
+    column_list = ['test_date', 'test_plan', 'run_by', 'number_users', 'app_version', 'ramp_up', 'run_length', 'number_failures', 'number_requests',
                     'average_response_time', 'source_server', 'target_server', 'target_server_cpu', 'target_server_memory', 'target_server_load',
                     'test_notes', 'creator']
-    column_exclude_list = ['app_version','ramp_up','number_requests','test_notes','creator']
+    column_exclude_list = ['run_by','app_version','ramp_up','number_requests','test_notes','creator']
     column_labels = dict(target_server='Target', number_users='# Users', number_failures='# Fail', average_response_time='ART',
                          source_server='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU')
     form_excluded_columns = ('created_at','creator_id', 'creator')
