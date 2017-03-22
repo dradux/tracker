@@ -68,6 +68,7 @@ class TestResult(db.Model):
     app_version = db.Column(db.String(15), nullable=True)
     number_users = db.Column(db.Integer, nullable=False)
     ramp_up = db.Column(db.Integer, nullable=False)
+    loop_amount = db.Column(db.Integer, default=1, nullable=True)
 
     run_length = db.Column(db.Integer, nullable=True)
     number_failures = db.Column(db.Integer, nullable=True)
