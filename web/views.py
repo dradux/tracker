@@ -263,15 +263,17 @@ class TestResultView(sqla.ModelView):
 
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
-                      'target_server.name','run_by.name']
+                      'target_server.name','run_by.name', 'test_passed']
     column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
-                            'number_failures', 'average_response_time']
-    column_list = ['test_date', 'test_plan', 'run_by', 'number_users', 'app_version', 'ramp_up', 'run_length', 'number_failures', 'number_requests',
+                            'number_failures', 'average_response_time', 'test_passed', 'target_server_cpu', 'target_server_memory', 'target_server_load']
+    column_list = ['test_date', 'test_plan', 'run_by', 'test_passed', 'number_users', 'app_version', 'ramp_up', 'run_length', 'number_failures', 'number_requests',
                     'average_response_time', 'source_server', 'target_server', 'target_server_cpu', 'target_server_memory', 'target_server_load',
                     'test_notes', 'creator']
     column_exclude_list = ['run_by','app_version','ramp_up','number_requests','test_notes','creator']
     column_labels = dict(target_server='Target', number_users='# Users', number_failures='# Fail', average_response_time='ART',
-                         source_server='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU')
+                         source_server='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU',
+                         test_passed='Pass',
+                         )
     form_excluded_columns = ('created_at','creator_id', 'creator')
     # sort by test_date, descending
     column_default_sort = ('test_date', True)
@@ -285,6 +287,9 @@ class TestResultView(sqla.ModelView):
     }
 
     form_args = {
+        'test_passed': {
+            'label': 'Pass'
+        },
         'number_users': {
             'label': '# Users'
         },
@@ -320,6 +325,9 @@ class TestResultView(sqla.ModelView):
         },
         'number_users': {
             'placeholder': 'number of users ran for test',
+        },
+        'test_passed': {
+            'title': 'did the test run successfully? (Yes|No)',
         },
         'ramp_up': {
             'placeholder': 'ramp up time (in seconds)',

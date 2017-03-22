@@ -8,6 +8,10 @@ TRacker is the Test Result Tracker!
 - add logic that introspects the test plan and grabs summary, details, run info, etc. if possible
 - might want a file upload for test plan vs having it in git, check out [file & image fields](http://flask-admin.readthedocs.io/en/latest/advanced/)
 - would be nice to be able to set defaults for Source/Target and Test Plan on test_result
+- add 'migrate updgrade' to app 'onstart' so upgrades are applied automatically (hot deploys)
+- cleanup model for required fields (run_by, ???)
+- need all note fields to render line returns (formatted rendering)
+- default run_by to current user
 
 
 ## Stack
@@ -44,9 +48,11 @@ Note that the app starts up port 80 and 443, the `flask_project.conf` (nginx con
 
 ## Development
 - init migrations: `docker-compose run web python manage.py db init`
-- create migration: `docker-compose run web python manage.py db migrate`
+- create migration: `docker-compose run web python manage.py db migrate -m "concise desc of change"`
 - apply migration: `docker-compose run web python manage.py db upgrade`
 - rollback migration: `docker-compose run web python manage.py db downgrade`
+- view migration history: `docker-compose run web python manage.py db history`
+- get current version: `docker-compose run web python manage.py db current --verbose`
 
 ## Notes
 - the access/error logs from nginx are wrote to the nginx/logs volume to persist them and to allow easy monitoring of these files.
