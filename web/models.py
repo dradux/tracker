@@ -9,7 +9,8 @@ from flask.ext.security import UserMixin, RoleMixin
 class Server(db.Model):
     __tablename__ = 'server'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(13), nullable=False)
+    full_name = db.Column(db.String(100), nullable=True)
     cpu_cores = db.Column(db.Integer, nullable=False)
     compute_units = db.Column(db.Numeric(5,1), nullable=True)
     memory = db.Column(db.Numeric(5,1), nullable=False)
@@ -36,6 +37,7 @@ class TestPlan(db.Model):
     summary = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text, nullable=False)
     run_info = db.Column(db.Text, nullable=False)
+    dependencies = db.Column(db.Text, nullable=True)
     notes = db.Column(db.Text, nullable=True)
 
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -44,6 +46,7 @@ class TestPlan(db.Model):
     def __str__(self):
         # chem4 (v1.0.0)
         return '%s (v%s)' % (self.name, self.version)
+
 
 class TestResult(db.Model):
     __tablename__ = 'test_result'
@@ -77,6 +80,9 @@ class TestResult(db.Model):
 
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     creator = db.relationship("User", foreign_keys=[creator_id])
+
+    run_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    run_by = db.relationship("User", foreign_keys=[run_by_id])
 
     def __str__(self):
         return '%s (%s)' % (self.test_plan, test_date)

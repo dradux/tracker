@@ -7,6 +7,8 @@ TRacker is the Test Result Tracker!
 - add "type" column to test plan (e.g. jmeter, locust, etc.)
 - add logic that introspects the test plan and grabs summary, details, run info, etc. if possible
 - might want a file upload for test plan vs having it in git, check out [file & image fields](http://flask-admin.readthedocs.io/en/latest/advanced/)
+- would be nice to be able to set defaults for Source/Target and Test Plan on test_result
+
 
 ## Stack
 - web: nginx

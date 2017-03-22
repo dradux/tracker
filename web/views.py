@@ -94,12 +94,16 @@ class ServerView(sqla.ModelView):
     details_modal = True
     can_export = True
 
-    column_searchable_list = ['name']
-    column_filters = ['name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'creator.username', 'creator.name', 'creator.email',]
-    column_editable_list = ['name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'storage', 'notes']
-    column_list = ['name', 'cpu_cores', 'compute_units', 'memory', 'virtual', 'storage', 'notes', 'creator']
-    column_exclude_list = ['storage', 'notes']
+    column_searchable_list = ['name','full_name','storage','notes',]
+    column_filters = ['name', 'full_name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'creator.username',
+                      'creator.name', 'creator.email','storage','notes']
+    column_editable_list = ['name', 'full_name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'storage', 'notes']
+    column_list = ['name', 'full_name', 'cpu_cores', 'compute_units', 'memory', 'virtual', 'storage', 'notes', 'creator']
+    column_exclude_list = ['storage']
     column_labels = dict(cpu_cores='CPU Cores')
+    # sort by name, descending
+    column_default_sort = ('name', True)
+
     form_excluded_columns = ('creator_id')
 
     form_args = {
@@ -113,7 +117,10 @@ class ServerView(sqla.ModelView):
 
     form_widget_args = {
         'name': {
-            'placeholder': 'server name',
+            'placeholder': 'server short name',
+        },
+        'full_name': {
+            'placeholder': 'server full name',
         },
         'cpu_cores': {
             #'style': 'width: 50px',
@@ -168,12 +175,15 @@ class TestPlanView(sqla.ModelView):
     can_export = True
     page_size = 20
 
-    column_searchable_list = ['name']
-    column_filters = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes',]
+    column_searchable_list = ['name', 'summary', 'description', 'run_info', 'dependencies', 'notes',]
+    column_filters = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'dependencies', 'notes',]
     column_editable_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes',]
-    column_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes', 'creator']
-    column_exclude_list = ['description', 'run_info', 'notes']
+    column_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'dependencies', 'notes', 'creator']
+    column_exclude_list = ['description', 'run_info', 'dependencies', 'notes']
     column_labels = dict(source_url='Source')
+    # sort by name, descending
+    column_default_sort = ('name', True)
+
     form_excluded_columns = ('creator_id')
 
     form_args = {
@@ -209,6 +219,10 @@ class TestPlanView(sqla.ModelView):
         'run_info': {
             'placeholder': 'info needed to run the script',
             'title': 'all info needed to run the script such as variables or properties that need to be set',
+        },
+        'dependencies': {
+            'placeholder': 'dependencies of the script',
+            'title': 'all dependencies of the script (e.g. fakeusers.csv,  or other files, apps, data, info, etc.)',
         },
         'notes': {
             'placeholder': 'notes regarding test script',
@@ -247,14 +261,22 @@ class TestResultView(sqla.ModelView):
     details_modal = True
     can_export = True
 
-    column_searchable_list = ['test_plan.name']
-    column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
-    #~ column_filters = ['test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time', 'target_server.name',]
-    column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length', 'number_failures', 'average_response_time']
-    column_list = ['test_date', 'test_plan', 'number_users', 'app_version', 'ramp_up', 'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server', 'target_server_cpu', 'target_server_memory', 'target_server_load', 'source_server', 'creator']
-    column_exclude_list = ['app_version','ramp_up','number_requests','target_server_cpu','target_server_memory','target_server_load','test_notes',]
-    column_labels = dict(target_server='Target', number_users='# Users', number_failures='# Fail', average_response_time='ART', source_server='Source')
+    column_searchable_list = ['test_plan.name', 'test_notes']
+    column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
+                      'target_server.name',]
+    column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
+                            'number_failures', 'average_response_time']
+    column_list = ['test_date', 'test_plan', 'number_users', 'app_version', 'ramp_up', 'run_length', 'number_failures', 'number_requests',
+                    'average_response_time', 'source_server', 'target_server', 'target_server_cpu', 'target_server_memory', 'target_server_load',
+                    'test_notes', 'creator']
+    column_exclude_list = ['app_version','ramp_up','number_requests','test_notes','creator']
+    column_labels = dict(target_server='Target', number_users='# Users', number_failures='# Fail', average_response_time='ART',
+                         source_server='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU')
     form_excluded_columns = ('created_at','creator_id', 'creator')
+    # sort by test_date, descending
+    column_default_sort = ('test_date', True)
+    #column_default_sort = 'test_plan.name'
+
     #column_formatters = dict(target_server='target_server.name')
     column_formatters = {
         #'test_plan': _test_plan_formatter,
@@ -331,6 +353,10 @@ class TestResultView(sqla.ModelView):
             'placeholder': 'peak server load on Target Server',
             'title': 'peak server load measured on Target Server during test\nnote: this is the 1 minute load of top on target server',
         },
+        'run_by': {
+            'placeholder': 'who the test was run by',
+            'title': 'who ran the test',
+        }
     }
 
     def on_model_change(self, form, model, is_created):
