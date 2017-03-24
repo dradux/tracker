@@ -62,7 +62,7 @@ class TestResult(db.Model):
     target_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=False)
     target_server = db.relationship(Server, foreign_keys=[target_server_id])
 
-    run_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    run_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     run_by = db.relationship("User", foreign_keys=[run_by_id])
 
     app_version = db.Column(db.String(15), nullable=True)
@@ -85,8 +85,7 @@ class TestResult(db.Model):
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     creator = db.relationship("User", foreign_keys=[creator_id])
 
-
-    test_passed = db.Column(db.Boolean, nullable=True, default=True)
+    test_passed = db.Column(db.Boolean, nullable=True, default=False)
 
     def __str__(self):
         return '%s (%s)' % (self.test_plan, test_date)

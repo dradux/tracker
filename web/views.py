@@ -10,6 +10,10 @@ from wtforms.fields import PasswordField
 from jinja2 import Markup
 from flask import url_for
 
+#from flask_admin.form import rules
+#from flask_admin.model.template import EndpointLinkRowAction, LinkRowAction
+
+
 class HomeView(AdminIndexView):
     @expose('/')
     def index(self):
@@ -28,6 +32,9 @@ class AboutView(BaseView):
 # Customized User model for SQL-Admin
 class UserAdmin(sqla.ModelView):
 
+    #can_view_details = True
+    #details_modal = True
+
     # Don't display the password on the list of Users
     column_exclude_list = ('password',)
 
@@ -38,6 +45,13 @@ class UserAdmin(sqla.ModelView):
 
     # Automatically display human-readable names for the current and available Roles when creating or editing a User
     column_auto_select_related = True
+
+    def _note_formatter(view, context, model, name):
+        return Markup("%s" % (model.note)) if model.note else ""
+
+    column_formatters = {
+        'note': _note_formatter,
+    }
 
     # Prevent administration of Users unless the currently logged-in user has the "admin" role
     def is_accessible(self):
@@ -87,7 +101,12 @@ class ServerView(sqla.ModelView):
         else:
             self.can_delete = False
 
-    page_size = 20
+    def _notes_formatter(view, context, model, name):
+        return Markup("%s" % (model.notes)) if model.notes else ""
+    def _storage_formatter(view, context, model, name):
+        return Markup("%s" % (model.storage)) if model.storage else ""
+
+    page_size = 10
     can_view_details = True
     create_modal = True
     edit_modal = True
@@ -105,6 +124,11 @@ class ServerView(sqla.ModelView):
     column_default_sort = ('name', True)
 
     form_excluded_columns = ('creator_id')
+
+    column_formatters = {
+        'storage': _storage_formatter,
+        'notes': _notes_formatter,
+    }
 
     form_args = {
         'cpu_cores': {
@@ -168,12 +192,23 @@ class TestPlanView(sqla.ModelView):
         else:
             self.can_delete = False
 
+    def _summary_formatter(view, context, model, name):
+        return Markup("%s" % (model.summary)) if model.summary else ""
+    def _description_formatter(view, context, model, name):
+        return Markup("%s" % (model.description)) if model.description else ""
+    def _run_info_formatter(view, context, model, name):
+        return Markup("%s" % (model.run_info)) if model.run_info else ""
+    def _dependencies_formatter(view, context, model, name):
+        return Markup("%s" % (model.dependencies)) if model.dependencies else ""
+    def _notes_formatter(view, context, model, name):
+        return Markup("%s" % (model.notes)) if model.notes else ""
+
     can_view_details = True
     create_modal = True
     edit_modal = True
     details_modal = True
     can_export = True
-    page_size = 20
+    page_size = 10
 
     column_searchable_list = ['name', 'summary', 'description', 'run_info', 'dependencies', 'notes',]
     column_filters = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'dependencies', 'notes',]
@@ -185,6 +220,14 @@ class TestPlanView(sqla.ModelView):
     column_default_sort = ('name', True)
 
     form_excluded_columns = ('creator_id')
+
+    column_formatters = {
+        'summary': _summary_formatter,
+        'description': _description_formatter,
+        'run_info': _run_info_formatter,
+        'dependencies': _dependencies_formatter,
+        'notes': _notes_formatter,
+    }
 
     form_args = {
         'source_url': {
@@ -237,6 +280,9 @@ class TestPlanView(sqla.ModelView):
 
 
 class TestResultView(sqla.ModelView):
+    @expose('/tya/')
+    def index(self):
+        return self.render('help-about.html')
 
     def is_accessible(self):
         return current_user.has_role('user')
@@ -253,8 +299,32 @@ class TestResultView(sqla.ModelView):
         return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.source_server.id), model.source_server.name)) if model.source_server else ""
     def _test_plan_formatter(view, context, model, name):
         return Markup("<a href='%s'>%s</a>" % (url_for('test_plan.edit_view', id=model.test_plan.id), model.test_plan.name)) if model.test_plan else ""
+    def _test_notes_formatter(view, context, model, name):
+        return Markup("%s" % (model.test_notes)) if model.test_notes else ""
 
-    page_size = 50
+    def on_form_prefill(self, form, id):
+        form.run_by = 'admin'
+        #form.process()
+
+    #def edit(id):
+    #    if request.method == 'POST':
+
+    #~ form_create_rules = [
+        #~ #MyBlock('Hello WOrld')
+        #~ #rules.FieldSet(('first_name', 'last_name', 'email', 'phone'), 'User'),
+        #~ # ... and it is just shortcut for:
+        #~ rules.Header('app_version'),
+        #~ rules.Field('app_version'),
+    #~ ]
+
+    #~ ajax_update
+    #~ column_extra_row_actions = [
+        #~ LinkRowAction('glyphicon glyphicon-off', 'http://direct.link/?id={row_id}'),
+        #~ LinkRowAction('glyphicon glyphicon-off', 'tya/?id={row_id}'),
+        #~ #EndpointLinkRowAction('glyphicon glyphicon-on', 'testresult.index_view'),
+    #~ ]
+
+    page_size = 15
     can_view_details = True
     create_modal = True
     edit_modal = True
@@ -284,6 +354,7 @@ class TestResultView(sqla.ModelView):
         #'test_plan': _test_plan_formatter,
         'target_server': _target_server_formatter,
         'source_server': _source_server_formatter,
+        'test_notes': _test_notes_formatter,
     }
 
     form_args = {

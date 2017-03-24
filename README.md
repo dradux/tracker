@@ -9,9 +9,8 @@ TRacker is the Test Result Tracker!
 - might want a file upload for test plan vs having it in git, check out [file & image fields](http://flask-admin.readthedocs.io/en/latest/advanced/)
 - would be nice to be able to set defaults for Source/Target and Test Plan on test_result
 - add 'migrate updgrade' to app 'onstart' so upgrades are applied automatically (hot deploys)
-- cleanup model for required fields (run_by, ???)
-- need all note fields to render line returns (formatted rendering)
 - default run_by to current user
+- would be nice to have a button on list that shows notes popup
 
 
 ## Stack
