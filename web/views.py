@@ -115,9 +115,9 @@ class ServerView(sqla.ModelView):
 
     column_searchable_list = ['name','full_name','storage','notes',]
     column_filters = ['name', 'full_name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'creator.username',
-                      'creator.name', 'creator.email','storage','notes']
-    column_editable_list = ['name', 'full_name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'storage', 'notes']
-    column_list = ['name', 'full_name', 'cpu_cores', 'compute_units', 'memory', 'virtual', 'storage', 'notes', 'creator']
+                      'creator.name', 'creator.email','storage','notes','version','active']
+    column_editable_list = ['name', 'full_name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'storage', 'notes','version','active']
+    column_list = ['name','full_name','version','active','cpu_cores', 'compute_units', 'memory', 'virtual', 'storage', 'notes', 'creator',]
     column_exclude_list = ['storage']
     column_labels = dict(cpu_cores='CPU Cores')
     # sort by name, descending
@@ -150,6 +150,13 @@ class ServerView(sqla.ModelView):
             #'style': 'width: 50px',
             'placeholder': 'number of cores',
             'title': 'total number of cpu cores in server\n2 cpus with 2 cores each = 4 cores',
+        },
+        'version': {
+            'placeholder': 'version of server',
+            'title': 'version of server (used to distinguish hw upgrades - e.g. rebuilt as larger ec2 instance)',
+        },
+        'active': {
+            'title': 'is the server active (used to deactivate old/unavailable instances of a server)',
         },
         'memory': {
             #'style': 'width: 77px',

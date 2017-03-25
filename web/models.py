@@ -11,6 +11,8 @@ class Server(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(13), nullable=False)
     full_name = db.Column(db.String(100), nullable=True)
+    version = db.Column(db.Integer, nullable=True)
+    active = db.Column(db.Boolean, nullable=True, default=True)
     cpu_cores = db.Column(db.Integer, nullable=False)
     compute_units = db.Column(db.Numeric(5,1), nullable=True)
     memory = db.Column(db.Numeric(5,1), nullable=False)
@@ -25,7 +27,10 @@ class Server(db.Model):
         fmt_compute_units=''
         if self.compute_units:
             fmt_compute_units='%scu/' % (self.compute_units)
-        return '%s (%scores/%s%smemory)' % (self.name, self.cpu_cores, fmt_compute_units, self.memory)
+        fmt_version=''
+        if self.version:
+            fmt_version='(v.%s)' % (self.version)
+        return '%s - %sco/%s%sme %s' % (self.name, self.cpu_cores, fmt_compute_units, self.memory, fmt_version)
 
 
 class TestPlan(db.Model):
