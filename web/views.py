@@ -10,9 +10,20 @@ from wtforms.fields import PasswordField
 from jinja2 import Markup
 from flask import url_for
 
-#from flask_admin.form import rules
-#from flask_admin.model.template import EndpointLinkRowAction, LinkRowAction
 
+#from flask_admin.contrib.sqla.filters import BaseSQLAFilter, FilterEqual
+from models import Server
+
+# custom filter for Server: only active servers.
+#~ class FilterActiveServer(BaseSQLAFilter):
+    #~ def apply(self, query, value, alias=None):
+        #~ if value:
+            #~ return query.filter(self.column == True)
+        #~ else:
+            #~ return query.filter(self.column == False)
+
+    #~ def operation(self):
+        #~ return 'is Active'
 
 class HomeView(AdminIndexView):
     @expose('/')
@@ -34,6 +45,9 @@ class UserAdmin(sqla.ModelView):
 
     #can_view_details = True
     #details_modal = True
+
+    # default sort by name
+    column_default_sort = ('name', False)
 
     # Don't display the password on the list of Users
     column_exclude_list = ('password',)
@@ -106,6 +120,10 @@ class ServerView(sqla.ModelView):
     def _storage_formatter(view, context, model, name):
         return Markup("%s" % (model.storage)) if model.storage else ""
 
+    # example of default filter for list.
+    #~ def get_query(self):
+        #~ return self.session.query(self.model).filter(self.model.active == True)
+
     page_size = 10
     can_view_details = True
     create_modal = True
@@ -115,13 +133,13 @@ class ServerView(sqla.ModelView):
 
     column_searchable_list = ['name','full_name','storage','notes',]
     column_filters = ['name', 'full_name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'creator.username',
-                      'creator.name', 'creator.email','storage','notes','version','active']
+                      'creator.name', 'creator.email','storage','notes','version', 'active',]   # example custom filter: FilterActiveServer(column=Server.active, name='Only Active', options=((True, 'Yes'), (False, 'No')))]
     column_editable_list = ['name', 'full_name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'storage', 'notes','version','active']
     column_list = ['name','full_name','version','active','cpu_cores', 'compute_units', 'memory', 'virtual', 'storage', 'notes', 'creator',]
     column_exclude_list = ['storage']
     column_labels = dict(cpu_cores='CPU Cores')
     # sort by name, descending
-    column_default_sort = ('name', True)
+    column_default_sort = ('name', False)
 
     form_excluded_columns = ('creator_id')
 
@@ -224,7 +242,7 @@ class TestPlanView(sqla.ModelView):
     column_exclude_list = ['description', 'run_info', 'dependencies', 'notes']
     column_labels = dict(source_url='Source')
     # sort by name, descending
-    column_default_sort = ('name', True)
+    column_default_sort = ('name', False)
 
     form_excluded_columns = ('creator_id')
 
@@ -309,22 +327,12 @@ class TestResultView(sqla.ModelView):
     def _test_notes_formatter(view, context, model, name):
         return Markup("%s" % (model.test_notes)) if model.test_notes else ""
 
-    def on_form_prefill(self, form, id):
-        form.run_by = 'admin'
+    #~ def on_form_prefill(self, form, id):
+        #~ form.run_by = 'admin'
         #form.process()
 
-    #def edit(id):
-    #    if request.method == 'POST':
 
-    #~ form_create_rules = [
-        #~ #MyBlock('Hello WOrld')
-        #~ #rules.FieldSet(('first_name', 'last_name', 'email', 'phone'), 'User'),
-        #~ # ... and it is just shortcut for:
-        #~ rules.Header('app_version'),
-        #~ rules.Field('app_version'),
-    #~ ]
-
-    #~ ajax_update
+    # example to add extra row_actions
     #~ column_extra_row_actions = [
         #~ LinkRowAction('glyphicon glyphicon-off', 'http://direct.link/?id={row_id}'),
         #~ LinkRowAction('glyphicon glyphicon-off', 'tya/?id={row_id}'),
@@ -365,6 +373,14 @@ class TestResultView(sqla.ModelView):
     }
 
     form_args = {
+        'source_server': {
+            # filter to only show 'active' servers
+            'query_factory': lambda: Server.query.filter_by(active=True)
+        },
+        'target_server': {
+            # filter to only show 'active' servers
+            'query_factory': lambda: Server.query.filter_by(active=True)
+        },
         'test_passed': {
             'label': 'Pass'
         },

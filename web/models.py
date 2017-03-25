@@ -6,6 +6,8 @@ from app import db
 from flask.ext.security import UserMixin, RoleMixin
 
 
+
+
 class Server(db.Model):
     __tablename__ = 'server'
     id = db.Column(db.Integer, primary_key=True)
