@@ -1,12 +1,7 @@
 # models.py
-
 import datetime
 from app import db
-
 from flask.ext.security import UserMixin, RoleMixin
-
-
-
 
 class Server(db.Model):
     __tablename__ = 'server'
@@ -26,13 +21,14 @@ class Server(db.Model):
     creator = db.relationship("User", foreign_keys=[creator_id])
 
     def __str__(self):
-        fmt_compute_units=''
-        if self.compute_units:
-            fmt_compute_units='%scu/' % (self.compute_units)
+        #fmt_compute_units=''
+        #if self.compute_units:
+        #    fmt_compute_units='%su/' % (self.compute_units)
         fmt_version=''
         if self.version:
             fmt_version='(v.%s)' % (self.version)
-        return '%s - %sco/%s%sme %s' % (self.name, self.cpu_cores, fmt_compute_units, self.memory, fmt_version)
+        # format: "Server (v.0)"
+        return '%s %s' % (self.name, fmt_version)
 
 
 class TestPlan(db.Model):
@@ -51,9 +47,13 @@ class TestPlan(db.Model):
     creator = db.relationship("User", foreign_keys=[creator_id])
 
     def __str__(self):
-        # chem4 (v1.0.0)
+        # format: "chem4 (v1.0.0)"
         return '%s (v%s)' % (self.name, self.version)
 
+
+server_testresults = db.Table('server_testresults',
+                              db.Column('testresult_id', db.Integer(), db.ForeignKey('test_result.id')),
+                              db.Column('server_id', db.Integer(), db.ForeignKey('server.id')))
 
 class TestResult(db.Model):
     __tablename__ = 'test_result'
@@ -63,8 +63,12 @@ class TestResult(db.Model):
     test_plan_id = db.Column(db.Integer(), db.ForeignKey('test_plan.id'), nullable=False)
     test_plan = db.relationship("TestPlan", foreign_keys=[test_plan_id])
 
-    source_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=False)
+    source_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=True)
     source_server = db.relationship("Server", foreign_keys=[source_server_id])
+
+    # @TODO: only allow 'active' servers.
+    source_servers = db.relationship('Server', secondary=server_testresults,
+                                     backref=db.backref('test_result', lazy='dynamic'))
 
     target_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=False)
     target_server = db.relationship(Server, foreign_keys=[target_server_id])
@@ -119,6 +123,7 @@ class Role(db.Model, RoleMixin):
     # __hash__ is required to avoid the exception TypeError: unhashable type: 'Role' when saving a User
     def __hash__(self):
         return hash(self.name)
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

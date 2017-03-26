@@ -318,12 +318,14 @@ class TestResultView(sqla.ModelView):
         else:
             self.can_delete = False
 
-    def _target_server_formatter(view, context, model, name):
-        return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.target_server.id), model.target_server.name)) if model.target_server else ""
-    def _source_server_formatter(view, context, model, name):
-        return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.source_server.id), model.source_server.name)) if model.source_server else ""
-    def _test_plan_formatter(view, context, model, name):
-        return Markup("<a href='%s'>%s</a>" % (url_for('test_plan.edit_view', id=model.test_plan.id), model.test_plan.name)) if model.test_plan else ""
+    #~ def _target_server_formatter(view, context, model, name):
+        #~ return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.target_server.id), model.target_server.name)) if model.target_server else ""
+    #~ def _source_server_formatter(view, context, model, name):
+        #~ return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.source_server.id), model.source_server.name)) if model.source_server else ""
+    #~ def _source_servers_formatter(view, context, model, name):
+        #~ return "%s" % (model.source_servers.server) if model.source_servers else ""
+    #~ def _test_plan_formatter(view, context, model, name):
+        #~ return Markup("<a href='%s'>%s</a>" % (url_for('test_plan.edit_view', id=model.test_plan.id), model.test_plan.name)) if model.test_plan else ""
     def _test_notes_formatter(view, context, model, name):
         return Markup("%s" % (model.test_notes)) if model.test_notes else ""
 
@@ -350,14 +352,16 @@ class TestResultView(sqla.ModelView):
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
                       'target_server.name','run_by.name', 'test_passed', 'loop_amount',]
     column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
-                            'number_failures', 'average_response_time', 'test_passed', 'target_server_cpu', 'target_server_memory', 'target_server_load']
-    column_list = ['test_date', 'test_plan', 'run_by', 'test_passed', 'number_users', 'app_version', 'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests',
-                    'average_response_time', 'source_server', 'target_server', 'target_server_cpu', 'target_server_memory', 'target_server_load',
-                    'test_notes', 'creator']
+                            'number_failures', 'average_response_time', 'test_passed', 'target_server_cpu', 'target_server_memory',
+                            'target_server_load', 'source_servers', 'target_server', 'source_server']
+    column_list = ['test_passed', 'test_date', 'test_plan', 'source_servers', 'source_server', 'target_server', 'number_users',
+                   'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server_cpu',
+                   'target_server_memory', 'target_server_load', 'test_notes', 'creator', 'run_by', 'app_version', 'ramp_up',
+                   'loop_amount',]
     column_exclude_list = ['run_by', 'loop_amount', 'app_version', 'ramp_up', 'number_requests', 'test_notes', 'creator']
-    column_labels = dict(target_server='Target', number_users='# Users', number_failures='# Fail', average_response_time='ART',
-                         source_server='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU',
-                         test_passed='Pass', loop_amount='Loops',
+    column_labels = dict(target_server='Target', number_users='#Users', number_failures='#Fail', average_response_time='ART',
+                         source_server='SourceXX', source_servers='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU',
+                         test_passed='Pass', loop_amount='Loops',run_length='RunLen',
                          )
     form_excluded_columns = ('created_at','creator_id', 'creator')
     # sort by test_date, descending
@@ -367,8 +371,8 @@ class TestResultView(sqla.ModelView):
     #column_formatters = dict(target_server='target_server.name')
     column_formatters = {
         #'test_plan': _test_plan_formatter,
-        'target_server': _target_server_formatter,
-        'source_server': _source_server_formatter,
+        #'target_server': _target_server_formatter,
+        #'source_server': _source_server_formatter,
         'test_notes': _test_notes_formatter,
     }
 
@@ -394,7 +398,10 @@ class TestResultView(sqla.ModelView):
             'label': '# Fail'
         },
         'number_requests': {
-            'label': '# Requests'
+            'label': '# Reqs'
+        },
+        'run_length': {
+            'label': 'Run Length'
         },
         'average_response_time': {
             'label': 'ART'
