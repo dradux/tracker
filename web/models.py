@@ -63,9 +63,6 @@ class TestResult(db.Model):
     test_plan_id = db.Column(db.Integer(), db.ForeignKey('test_plan.id'), nullable=False)
     test_plan = db.relationship("TestPlan", foreign_keys=[test_plan_id])
 
-    source_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=True)
-    source_server = db.relationship("Server", foreign_keys=[source_server_id])
-
     # @TODO: only allow 'active' servers.
     source_servers = db.relationship('Server', secondary=server_testresults,
                                      backref=db.backref('test_result', lazy='dynamic'))

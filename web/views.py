@@ -320,8 +320,6 @@ class TestResultView(sqla.ModelView):
 
     #~ def _target_server_formatter(view, context, model, name):
         #~ return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.target_server.id), model.target_server.name)) if model.target_server else ""
-    #~ def _source_server_formatter(view, context, model, name):
-        #~ return Markup("<a href='%s'>%s</a>" % (url_for('server.edit_view', id=model.source_server.id), model.source_server.name)) if model.source_server else ""
     #~ def _source_servers_formatter(view, context, model, name):
         #~ return "%s" % (model.source_servers.server) if model.source_servers else ""
     #~ def _test_plan_formatter(view, context, model, name):
@@ -341,7 +339,8 @@ class TestResultView(sqla.ModelView):
         #~ #EndpointLinkRowAction('glyphicon glyphicon-on', 'testresult.index_view'),
     #~ ]
 
-    page_size = 15
+    page_size = 10
+    can_set_page_size = True
     can_view_details = True
     create_modal = True
     edit_modal = True
@@ -351,16 +350,16 @@ class TestResultView(sqla.ModelView):
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
                       'target_server.name','run_by.name', 'test_passed', 'loop_amount',]
-    column_editable_list = ['source_server_id', 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
+    column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time', 'test_passed', 'target_server_cpu', 'target_server_memory',
-                            'target_server_load', 'source_servers', 'target_server', 'source_server']
-    column_list = ['test_passed', 'test_date', 'test_plan', 'source_servers', 'source_server', 'target_server', 'number_users',
+                            'target_server_load', 'source_servers', 'target_server']
+    column_list = ['test_passed', 'test_date', 'test_plan', 'source_servers', 'target_server', 'number_users',
                    'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server_cpu',
                    'target_server_memory', 'target_server_load', 'test_notes', 'creator', 'run_by', 'app_version', 'ramp_up',
                    'loop_amount',]
     column_exclude_list = ['run_by', 'loop_amount', 'app_version', 'ramp_up', 'number_requests', 'test_notes', 'creator']
     column_labels = dict(target_server='Target', number_users='#Users', number_failures='#Fail', average_response_time='ART',
-                         source_server='SourceXX', source_servers='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU',
+                         source_servers='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU',
                          test_passed='Pass', loop_amount='Loops',run_length='RunLen',
                          )
     form_excluded_columns = ('created_at','creator_id', 'creator')
@@ -372,15 +371,10 @@ class TestResultView(sqla.ModelView):
     column_formatters = {
         #'test_plan': _test_plan_formatter,
         #'target_server': _target_server_formatter,
-        #'source_server': _source_server_formatter,
         'test_notes': _test_notes_formatter,
     }
 
     form_args = {
-        'source_server': {
-            # filter to only show 'active' servers
-            'query_factory': lambda: Server.query.filter_by(active=True)
-        },
         'target_server': {
             # filter to only show 'active' servers
             'query_factory': lambda: Server.query.filter_by(active=True)
