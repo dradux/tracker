@@ -11,8 +11,8 @@ from jinja2 import Markup
 from flask import url_for
 
 
-#from flask_admin.contrib.sqla.filters import BaseSQLAFilter, FilterEqual
-from models import Server
+from flask_admin.contrib.sqla.filters import BaseSQLAFilter, FilterEqual, BooleanEqualFilter
+from models import Server, TestResult
 
 # custom filter for Server: only active servers.
 #~ class FilterActiveServer(BaseSQLAFilter):
@@ -56,6 +56,8 @@ class UserAdmin(sqla.ModelView):
 
     # Don't include the standard password field when creating or editing a User (but see below)
     form_excluded_columns = ('password',)
+
+    page_size = 20
 
     # Automatically display human-readable names for the current and available Roles when creating or editing a User
     column_auto_select_related = True
@@ -124,7 +126,7 @@ class ServerView(sqla.ModelView):
     #~ def get_query(self):
         #~ return self.session.query(self.model).filter(self.model.active == True)
 
-    page_size = 10
+    page_size = 15
     can_view_details = True
     create_modal = True
     edit_modal = True
@@ -233,7 +235,7 @@ class TestPlanView(sqla.ModelView):
     edit_modal = True
     details_modal = True
     can_export = True
-    page_size = 10
+    page_size = 20
 
     column_searchable_list = ['name', 'summary', 'description', 'run_info', 'dependencies', 'notes',]
     column_filters = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'dependencies', 'notes',]
@@ -305,9 +307,9 @@ class TestPlanView(sqla.ModelView):
 
 
 class TestResultView(sqla.ModelView):
-    @expose('/tya/')
-    def index(self):
-        return self.render('help-about.html')
+    #@expose('/tya/')
+    #def index(self):
+    #    return self.render('help-about.html')
 
     def is_accessible(self):
         return current_user.has_role('user')
@@ -339,7 +341,7 @@ class TestResultView(sqla.ModelView):
         #~ #EndpointLinkRowAction('glyphicon glyphicon-on', 'testresult.index_view'),
     #~ ]
 
-    page_size = 10
+    page_size = 15
     can_set_page_size = True
     can_view_details = True
     create_modal = True
@@ -349,18 +351,20 @@ class TestResultView(sqla.ModelView):
 
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
-                      'target_server.name','run_by.name', 'test_passed', 'loop_amount',]
+                      'target_server.name', 'run_by.name', 'test_passed', 'loop_amount',
+                      #BaseSQLAFilter(column=TestResult.test_notes, name='XSource ServerX')
+                     ]
     column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time', 'test_passed', 'target_server_cpu', 'target_server_memory',
                             'target_server_load', 'source_servers', 'target_server']
-    column_list = ['test_passed', 'test_date', 'test_plan', 'source_servers', 'target_server', 'number_users',
-                   'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server_cpu',
-                   'target_server_memory', 'target_server_load', 'test_notes', 'creator', 'run_by', 'app_version', 'ramp_up',
-                   'loop_amount',]
-    column_exclude_list = ['run_by', 'loop_amount', 'app_version', 'ramp_up', 'number_requests', 'test_notes', 'creator']
-    column_labels = dict(target_server='Target', number_users='#Users', number_failures='#Fail', average_response_time='ART',
-                         source_servers='Source', target_server_memory='Mem', target_server_load='Load', target_server_cpu='CPU',
-                         test_passed='Pass', loop_amount='Loops',run_length='RunLen',
+    column_list = ['test_date', 'test_plan', 'test_passed', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
+                   'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server_cpu',
+                   'target_server_memory', 'target_server_load', 'test_notes', 'creator',
+                   ]
+    column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'test_notes', 'creator', 'run_by',]
+    column_labels = dict(source_servers='Sources', target_server='Target', number_users='#Users', number_failures='#Fail',
+                         average_response_time='ART', target_server_memory='Mem', target_server_load='Load',
+                         target_server_cpu='CPU', test_passed='Pass', loop_amount='Loops',run_length='RunLen',
                          )
     form_excluded_columns = ('created_at','creator_id', 'creator')
     # sort by test_date, descending
@@ -412,16 +416,21 @@ class TestResultView(sqla.ModelView):
     }
 
     form_widget_args = {
+        'test_plan': {
+            'placeholder': 'name of test plan used',
+            'title': 'select the test plan used for the test run',
+        },
         'source_servers': {
             'placeholder': 'source server(s)',
             'title': 'select the server or servers that the test was ran from\nplease use the notes field to describe any unusual source server(s) info',
         },
+        'target_server': {
+            'placeholder': 'target server',
+            'title': 'select the server that the test was ran against\nplease use the notes field to describe any unusual target server info',
+        },
         'test_date': {
             'placeholder': 'date/time test was started',
         },
-        #~ 'test_plan': {
-            #~ 'placeholder': 'name of test plan executed',
-        #~ },
         'loop_amount': {
             'placeholder': '# of loops',
             'title': 'number of loops of the test performed (-1 indicates loop forever)',

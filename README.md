@@ -11,6 +11,7 @@ TRacker is the Test Result Tracker!
 - add 'migrate updgrade' to app 'onstart' so upgrades are applied automatically (hot deploys)
 - default run_by to current user
 - would be nice to have a button on list that shows notes popup
+- add more 'how to use' on the welcome screen or Help screen - write it from the perspective of Eric starting to use the app.
 
 
 ## Stack
