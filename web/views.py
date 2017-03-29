@@ -412,6 +412,10 @@ class TestResultView(sqla.ModelView):
     }
 
     form_widget_args = {
+        'source_servers': {
+            'placeholder': 'source server(s)',
+            'title': 'select the server or servers that the test was ran from\nplease use the notes field to describe any unusual source server(s) info',
+        },
         'test_date': {
             'placeholder': 'date/time test was started',
         },
@@ -452,21 +456,25 @@ class TestResultView(sqla.ModelView):
             'title': 'average response time (in milliseconds)',
         },
         'target_server_cpu': {
-            'placeholder': 'peak cpu utilization on Target Server',
-            'title': 'peak cpu utilization measured on Target Server during test',
+            'placeholder': 'average cpu utilization on Target Server',
+            'title': 'average cpu utilization measured on Target Server during test\nplease take note of unusually high/low values',
         },
         'target_server_memory': {
-            'placeholder': 'lowest free memory (in gb) on Target Server',
-            'title': 'lowest free memory (in gb) measured on Target Server during test',
+            'placeholder': 'average free memory (in gb) on Target Server',
+            'title': 'average free memory (in gb) measured on Target Server during test\nplease take note of unusually high/low values',
         },
         'target_server_load': {
-            'placeholder': 'peak server load on Target Server',
-            'title': 'peak server load measured on Target Server during test\nnote: this is the 1 minute load of top on target server',
+            'placeholder': 'average server load on Target Server',
+            'title': 'average server load measured on Target Server during test\nplease take note of unusually high/low values\nnote: this is the 1 minute load of top on target server',
         },
         'run_by': {
             'placeholder': 'who the test was run by',
             'title': 'who ran the test',
-        }
+        },
+        'test_notes': {
+            'placeholder': 'notes related to test (format with html as needed)',
+            'title': 'all notes related to the test run\nthis field accepts html data',
+        },
     }
 
     def on_model_change(self, form, model, is_created):
