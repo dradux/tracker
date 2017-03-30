@@ -403,20 +403,20 @@ class TestResultView(sqla.ModelView):
 
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
-                      'target_server.name', 'run_by.name', 'test_passed', 'loop_amount', 'status',
+                      'target_server.name', 'run_by.name', 'loop_amount', 'status',
                       #BaseSQLAFilter(column=TestResult.test_notes, name='XSource ServerX')
                      ]
     column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
-                            'number_failures', 'average_response_time', 'test_passed', 'target_server_cpu', 'target_server_memory',
+                            'number_failures', 'average_response_time', 'target_server_cpu', 'target_server_memory',
                             'target_server_load', 'source_servers', 'target_server', 'status', ]
-    column_list = ['test_date', 'test_plan', 'status', 'test_passed', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
+    column_list = ['test_date', 'test_plan', 'status', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
                    'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server_cpu',
                    'target_server_memory', 'target_server_load', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'creator',
                    ]
     column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'test_notes', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'creator', 'run_by',]
     column_labels = dict(source_servers='Sources', target_server='Target', number_users='#Users', number_failures='#Fail',
                          average_response_time='ART', target_server_memory='Mem', target_server_load='Load',
-                         target_server_cpu='CPU', test_passed='Pass', loop_amount='Loops',run_length='RunLen',
+                         target_server_cpu='CPU', loop_amount='Loops',run_length='RunLen',
                          prerun_notes='PreRun Notes', postrun_notes='PostRun Notes',
                          )
     form_excluded_columns = ('created_at','creator_id', 'creator')
@@ -439,9 +439,6 @@ class TestResultView(sqla.ModelView):
         'target_server': {
             # filter to only show 'active' servers
             'query_factory': lambda: Server.query.filter_by(active=True)
-        },
-        'test_passed': {
-            'label': 'Pass'
         },
         'loop_amount': {
             'label': 'Loops'
@@ -497,9 +494,6 @@ class TestResultView(sqla.ModelView):
         },
         'number_users': {
             'placeholder': 'number of users ran for test',
-        },
-        'test_passed': {
-            'title': 'did the test run successfully? (Yes|No)',
         },
         'ramp_up': {
             'placeholder': 'ramp up time (in seconds)',

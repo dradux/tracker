@@ -108,8 +108,6 @@ class TestResult(db.Model):
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     creator = db.relationship("User", foreign_keys=[creator_id])
 
-    test_passed = db.Column(db.Boolean, nullable=True, default=False)
-
     def __str__(self):
         return '%s (%s)' % (self.test_plan, test_date)
 

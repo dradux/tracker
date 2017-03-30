@@ -11,11 +11,7 @@ TRacker is the Test Result Tracker!
 - add 'migrate updgrade' to app 'onstart' so upgrades are applied automatically (hot deploys)
 - default run_by to current user
 - would be nice to have a button on list that shows notes popup
-- add more 'how to use' on the welcome screen or Help screen - write it from the perspective of Eric starting to use the app.
-- change test_passed to a status column (status of: created, failed, completed - table driven)
-  * /need migration to load data [Created, Completed, Failed]
-  * /structure and views done, need a migration that converts data (test_passed=True --> status=Completed, test_passed=False ==> status=Failed)
-- break out test_result: prerun_notes, run_notes, postrun_notes, failure_notes
+- add more 'how to use' on the welcome screen or Help screen - write it from the perspective of someone new starting to use the app.
 
 
 ## Stack
