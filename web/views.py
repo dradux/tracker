@@ -306,6 +306,50 @@ class TestPlanView(sqla.ModelView):
             model.creator_id = current_user.id
 
 
+class TestResultStatusView(sqla.ModelView):
+
+    # require user role.
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+    def _handle_view(self, name,**kwargs):
+        if current_user.has_role('admin'):
+            self.can_delete = True
+        else:
+            self.can_delete = False
+
+    can_view_details = True
+    create_modal = True
+    edit_modal = True
+    details_modal = True
+    can_export = True
+    page_size = 20
+
+    column_searchable_list = ['status', ]
+    column_filters = ['status', ]
+    column_editable_list = ['status',]
+    column_list = ['status', ]
+    #column_exclude_list = ['notes']
+    #column_labels = dict(source_url='Source')
+    # sort by name, descending
+    column_default_sort = ('status', False)
+
+    #form_excluded_columns = ('creator_id')
+
+    #~ form_args = {
+        #~ 'source_url': {
+            #~ 'label': 'Source'
+        #~ },
+    #~ }
+
+    form_widget_args = {
+        'status': {
+            'placeholder': 'test result status',
+            'title': 'the test result status value',
+        },
+    }
+
+
 class TestResultView(sqla.ModelView):
     #@expose('/tya/')
     #def index(self):
@@ -328,6 +372,14 @@ class TestResultView(sqla.ModelView):
         #~ return Markup("<a href='%s'>%s</a>" % (url_for('test_plan.edit_view', id=model.test_plan.id), model.test_plan.name)) if model.test_plan else ""
     def _test_notes_formatter(view, context, model, name):
         return Markup("%s" % (model.test_notes)) if model.test_notes else ""
+    def _prerun_notes_formatter(view, context, model, name):
+        return Markup("%s" % (model.prerun_notes)) if model.prerun_notes else ""
+    def _run_notes_formatter(view, context, model, name):
+        return Markup("%s" % (model.run_notes)) if model.run_notes else ""
+    def _postrun_notes_formatter(view, context, model, name):
+        return Markup("%s" % (model.postrun_notes)) if model.postrun_notes else ""
+    def _failure_notes_formatter(view, context, model, name):
+        return Markup("%s" % (model.failure_notes)) if model.failure_notes else ""
 
     #~ def on_form_prefill(self, form, id):
         #~ form.run_by = 'admin'
@@ -351,20 +403,21 @@ class TestResultView(sqla.ModelView):
 
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
-                      'target_server.name', 'run_by.name', 'test_passed', 'loop_amount',
+                      'target_server.name', 'run_by.name', 'test_passed', 'loop_amount', 'status',
                       #BaseSQLAFilter(column=TestResult.test_notes, name='XSource ServerX')
                      ]
     column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time', 'test_passed', 'target_server_cpu', 'target_server_memory',
-                            'target_server_load', 'source_servers', 'target_server']
-    column_list = ['test_date', 'test_plan', 'test_passed', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
+                            'target_server_load', 'source_servers', 'target_server', 'status', ]
+    column_list = ['test_date', 'test_plan', 'status', 'test_passed', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
                    'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server_cpu',
-                   'target_server_memory', 'target_server_load', 'test_notes', 'creator',
+                   'target_server_memory', 'target_server_load', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'creator',
                    ]
-    column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'test_notes', 'creator', 'run_by',]
+    column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'test_notes', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'creator', 'run_by',]
     column_labels = dict(source_servers='Sources', target_server='Target', number_users='#Users', number_failures='#Fail',
                          average_response_time='ART', target_server_memory='Mem', target_server_load='Load',
                          target_server_cpu='CPU', test_passed='Pass', loop_amount='Loops',run_length='RunLen',
+                         prerun_notes='PreRun Notes', postrun_notes='PostRun Notes',
                          )
     form_excluded_columns = ('created_at','creator_id', 'creator')
     # sort by test_date, descending
@@ -376,6 +429,10 @@ class TestResultView(sqla.ModelView):
         #'test_plan': _test_plan_formatter,
         #'target_server': _target_server_formatter,
         'test_notes': _test_notes_formatter,
+        'prerun_notes': _prerun_notes_formatter,
+        'run_notes': _run_notes_formatter,
+        'postrun_notes': _postrun_notes_formatter,
+        'failure_notes': _failure_notes_formatter,
     }
 
     form_args = {
@@ -483,6 +540,22 @@ class TestResultView(sqla.ModelView):
         'test_notes': {
             'placeholder': 'notes related to test (format with html as needed)',
             'title': 'all notes related to the test run\nthis field accepts html data',
+        },
+        'prerun_notes': {
+            'placeholder': 'prerun notes related to test (format with html as needed)',
+            'title': 'any notes related to steps/tasks to be ran before the test is run\nthis field accepts html data',
+        },
+        'run_notes': {
+            'placeholder': 'notes related to the test run (format with html as needed)',
+            'title': 'any notes related to the test run itself\nthis field accepts html data',
+        },
+        'postrun_notes': {
+            'placeholder': 'notes related to post run of test (format with html as needed)',
+            'title': 'any notes related to the post run of the test run (e.g. things that happened after test completed)\nthis field accepts html data',
+        },
+        'failure_notes': {
+            'placeholder': 'notes related to test failure (format with html as needed)',
+            'title': 'any notes related to the test run failure (e.g. error logs, stack dumps, etc.)\nthis field accepts html data',
         },
     }
 

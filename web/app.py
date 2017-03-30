@@ -64,10 +64,11 @@ def index():
 admin = admin.Admin(app, name='TRacker', template_mode='bootstrap3', index_view=HomeView(name='Home'))
 
 # Add views
-admin.add_view(UserAdmin(User, db.session))
-admin.add_view(ServerView(Server, db.session))
-admin.add_view(TestPlanView(TestPlan, db.session))
-admin.add_view(TestResultView(TestResult, db.session))
+admin.add_view(UserAdmin(User, db.session, name='Users'))
+admin.add_view(ServerView(Server, db.session, name='Servers'))
+admin.add_view(TestResultStatusView(TestResultStatus, db.session, name='Statuses'))
+admin.add_view(TestPlanView(TestPlan, db.session, name='Test Plans'))
+admin.add_view(TestResultView(TestResult, db.session, name='Test Results'))
 admin.add_view(OnlineHelpView(name='Online Help', endpoint='online_help', category='Help'))
 admin.add_view(AboutView(name='About', endpoint='help_about', category='Help'))
 

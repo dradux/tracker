@@ -3,6 +3,15 @@ import datetime
 from app import db
 from flask.ext.security import UserMixin, RoleMixin
 
+class TestResultStatus(db.Model):
+    __tablename__ = 'test_result_status'
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(13), nullable=False)
+
+    def __str__(self):
+        return '%s' % (self.status)
+
+
 class Server(db.Model):
     __tablename__ = 'server'
     id = db.Column(db.Integer, primary_key=True)
@@ -59,6 +68,8 @@ class TestResult(db.Model):
     __tablename__ = 'test_result'
     id = db.Column(db.Integer, primary_key=True)
     test_date = db.Column(db.DateTime, nullable=False)
+    status_id = db.Column(db.Integer(), db.ForeignKey('test_result_status.id'), nullable=True)
+    status = db.relationship("TestResultStatus", foreign_keys=[status_id])
 
     test_plan_id = db.Column(db.Integer(), db.ForeignKey('test_plan.id'), nullable=False)
     test_plan = db.relationship("TestPlan", foreign_keys=[test_plan_id])
@@ -87,9 +98,13 @@ class TestResult(db.Model):
     target_server_memory = db.Column(db.Numeric(5,2), nullable=True)
     target_server_load = db.Column(db.Numeric(5,2), nullable=True)
 
+    prerun_notes = db.Column(db.Text, nullable=True)
+    run_notes = db.Column(db.Text, nullable=True)
+    postrun_notes = db.Column(db.Text, nullable=True)
+    failure_notes = db.Column(db.Text, nullable=True)
     test_notes = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
 
+    created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     creator = db.relationship("User", foreign_keys=[creator_id])
 

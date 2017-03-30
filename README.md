@@ -12,6 +12,10 @@ TRacker is the Test Result Tracker!
 - default run_by to current user
 - would be nice to have a button on list that shows notes popup
 - add more 'how to use' on the welcome screen or Help screen - write it from the perspective of Eric starting to use the app.
+- change test_passed to a status column (status of: created, failed, completed - table driven)
+  * /need migration to load data [Created, Completed, Failed]
+  * /structure and views done, need a migration that converts data (test_passed=True --> status=Completed, test_passed=False ==> status=Failed)
+- break out test_result: prerun_notes, run_notes, postrun_notes, failure_notes
 
 
 ## Stack
@@ -48,7 +52,8 @@ Note that the app starts up port 80 and 443, the `flask_project.conf` (nginx con
 
 ## Development
 - init migrations: `docker-compose run web python manage.py db init`
-- create migration: `docker-compose run web python manage.py db migrate -m "concise desc of change"`
+- create migration (autodetect changes): `docker-compose run web python manage.py db migrate -m "concise desc of change"`
+- create migration (manually): `docker-compose run web python manage.py db revision -m "add test_result_status items"`
 - apply migration: `docker-compose run web python manage.py db upgrade`
 - rollback migration: `docker-compose run web python manage.py db downgrade`
 - view migration history: `docker-compose run web python manage.py db history`
