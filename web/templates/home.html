@@ -3,10 +3,7 @@
     <h3>Welcome to TRacker</h3>
     <div style="font-style: italic; ">
         {% if not current_user.id %}
-            You must <a href="/">login</a> to use this app.
-        {% endif %}
-        {% if current_user.id %}
-            Click <a href="/logout">here</a> to log out.
+            You can't do a lot with this app without <a href="/">logging in</a>...
         {% endif %}
     </div>
     <br />

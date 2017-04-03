@@ -1,17 +1,19 @@
 # README.md
 
-TRacker is the Test Result Tracker!
+TRacker is a Test Result tracker. If you use jmeter, locust.io, or another tool/app to test applications TRacker provides a quick place to record and share test results.
 
+TRacker started as a replacement for using an Excel spreadsheet to track test results. Excel worked to track test results; however, it was difficult to pass around a spreadsheet to different team members and ensure all results were in the "final" copy. TRacker addressed this issue by providing a central location all members can use simultaneously without adding a lot of burden.
 
-## TODO
-- add "type" column to test plan (e.g. jmeter, locust, etc.)
-- add logic that introspects the test plan and grabs summary, details, run info, etc. if possible
-- might want a file upload for test plan vs having it in git, check out [file & image fields](http://flask-admin.readthedocs.io/en/latest/advanced/)
-- would be nice to be able to set defaults for Source/Target and Test Plan on test_result
-- add 'migrate updgrade' to app 'onstart' so upgrades are applied automatically (hot deploys)
-- default run_by to current user
-- would be nice to have a button on list that shows notes popup
-- add more 'how to use' on the welcome screen or Help screen - write it from the perspective of someone new starting to use the app.
+TRacker is designed to be easy to setup and easy to use. TRacker supports multiple test plans and servers; however, tracker does not have a concept of a project. For example, imagine you have Application A which is a web app with multiple interfaces, services, and components. TRacker supports multiple test plans which allows you to have one test plan that tests component A, component B, and component C of Application A. Now imagine you have Application B which has its own interfaces, services, and components. You can add new test plans, servers, and then record Test Results for Application B; however, TRacker does not segregate this information. All users will be able to see test plans, servers, and test results for Application A and Application B. This may present an issue if you have stakeholders of one Application who should not see data from the other Application.
+
+The above issue of segregating Application A from Application B can easily be handled by simply running seperate instances of TRacker as tracker runs inside of docker containers. The process to run multiple instances of TRacker is simple:
+
+- For Application A
+  * `cd /opt/projects && git clone https://github.com/dradux/tracker.git application_a && cd application_a && docker-compose build && docker-compose up -d`
+- For Application B
+  * `cd /opt/projects && git clone https://github.com/dradux/tracker.git application_b && cd application_b && docker-compose build && docker-compose up -d`
+
+You now have two instances of TRacker, each completely separate from the other!
 
 
 ## Stack

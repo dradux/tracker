@@ -60,6 +60,15 @@ security = Security(app, user_datastore)
 def index():
     return render_template('index.html')
 
+@app.route('/logout')
+def logout_view():
+    login.logout_user()
+    return redirect(url_for('admin.index'))
+
+@app.route('/change_password')
+def change_password():
+    return render_template('security/change_password.html')
+
 # Create admin
 admin = admin.Admin(app, name='TRacker', template_mode='bootstrap3', index_view=HomeView(name='Home'))
 
@@ -69,6 +78,11 @@ admin.add_view(ServerView(Server, db.session, name='Servers'))
 admin.add_view(TestResultStatusView(TestResultStatus, db.session, name='Statuses'))
 admin.add_view(TestPlanView(TestPlan, db.session, name='Test Plans'))
 admin.add_view(TestResultView(TestResult, db.session, name='Test Results'))
+#admin.add_view(AccountLogoutView(name='Logout', endpoint='account_logout', category='Account'))
+admin.add_view(AccountView(name='User', endpoint='account_user', category='Account'))
+admin.add_link(LogoutMenuLink(name='Logout', category='', url="/logout"))
+admin.add_link(LoginMenuLink(name='Login', category='', url="/login"))
+
 admin.add_view(OnlineHelpView(name='Online Help', endpoint='online_help', category='Help'))
 admin.add_view(AboutView(name='About', endpoint='help_about', category='Help'))
 

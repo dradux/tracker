@@ -6,10 +6,10 @@ from flask.ext.admin import Admin, BaseView, expose, AdminIndexView
 from flask.ext.security import current_user, utils
 from wtforms import validators
 from wtforms.fields import PasswordField
+from flask.ext.admin.menu import MenuLink
 
 from jinja2 import Markup
 from flask import url_for
-
 
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter, FilterEqual, BooleanEqualFilter
 from models import Server, TestResult
@@ -26,16 +26,35 @@ from models import Server, TestResult
         #~ return 'is Active'
 
 class HomeView(AdminIndexView):
+
     @expose('/')
     def index(self):
         return self.render('home.html')
 
 class OnlineHelpView(BaseView):
+
     @expose('/')
     def index(self):
         return self.render('help-online.html')
 
+class AccountView(BaseView):
+
+    @expose('/')
+    def index(self):
+        return self.render('account.html')
+
+class LoginMenuLink(MenuLink):
+
+    def is_accessible(self):
+        return not current_user.is_authenticated
+
+class LogoutMenuLink(MenuLink):
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
 class AboutView(BaseView):
+
     @expose('/')
     def index(self):
         return self.render('help-about.html')
@@ -138,12 +157,12 @@ class ServerView(sqla.ModelView):
                       'creator.name', 'creator.email','storage','notes','version', 'active',]   # example custom filter: FilterActiveServer(column=Server.active, name='Only Active', options=((True, 'Yes'), (False, 'No')))]
     column_editable_list = ['name', 'full_name', 'cpu_cores', 'memory', 'compute_units', 'virtual', 'storage', 'notes','version','active']
     column_list = ['name','full_name','version','active','cpu_cores', 'compute_units', 'memory', 'virtual', 'storage', 'notes', 'creator',]
-    column_exclude_list = ['storage']
+    column_exclude_list = ['storage', 'creator']
     column_labels = dict(cpu_cores='CPU Cores')
     # sort by name, descending
     column_default_sort = ('name', False)
 
-    form_excluded_columns = ('creator_id')
+    form_excluded_columns = ('creator', 'test_result')
 
     column_formatters = {
         'storage': _storage_formatter,
@@ -241,12 +260,12 @@ class TestPlanView(sqla.ModelView):
     column_filters = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'dependencies', 'notes',]
     column_editable_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'notes',]
     column_list = ['name', 'version', 'source_url', 'summary', 'description', 'run_info', 'dependencies', 'notes', 'creator']
-    column_exclude_list = ['description', 'run_info', 'dependencies', 'notes']
+    column_exclude_list = ['description', 'run_info', 'dependencies', 'notes', 'creator']
     column_labels = dict(source_url='Source')
     # sort by name, descending
     column_default_sort = ('name', False)
 
-    form_excluded_columns = ('creator_id')
+    form_excluded_columns = ('creator')
 
     column_formatters = {
         'summary': _summary_formatter,
@@ -408,7 +427,7 @@ class TestResultView(sqla.ModelView):
                      ]
     column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time', 'target_server_cpu', 'target_server_memory',
-                            'target_server_load', 'source_servers', 'target_server', 'status', ]
+                            'target_server_load', 'source_servers', 'target_server', 'status', 'loop_amount']
     column_list = ['test_date', 'test_plan', 'status', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
                    'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server_cpu',
                    'target_server_memory', 'target_server_load', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'creator',

@@ -109,7 +109,7 @@ class TestResult(db.Model):
     creator = db.relationship("User", foreign_keys=[creator_id])
 
     def __str__(self):
-        return '%s (%s)' % (self.test_plan, test_date)
+        return '%s (%s)' % (self.test_plan, self.test_date)
 
 
 #
