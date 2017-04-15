@@ -7,12 +7,13 @@ from flask.ext.security import current_user, utils
 from wtforms import validators
 from wtforms.fields import PasswordField
 from flask.ext.admin.menu import MenuLink
+from flask_admin.model.form import InlineFormAdmin
 
 from jinja2 import Markup
 from flask import url_for
 
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter, FilterEqual, BooleanEqualFilter
-from models import Server, TestResult
+from models import Server, TestResult, ServerRunMetric
 
 # custom filter for Server: only active servers.
 #~ class FilterActiveServer(BaseSQLAFilter):
@@ -123,6 +124,58 @@ class RoleAdmin(sqla.ModelView):
     # Prevent administration of Roles unless the currently logged-in user has the "admin" role
     def is_accessible(self):
         return current_user.has_role('admin')
+
+
+class RunMetricView(sqla.ModelView):
+    # require user role.
+    def is_accessible(self):
+        return current_user.has_role('user')
+
+    def _handle_view(self, name,**kwargs):
+        if current_user.has_role('admin'):
+            self.can_delete = True
+        else:
+            self.can_delete = False
+
+    def _note_formatter(view, context, model, name):
+        return Markup("%s" % (model.note)) if model.note else ""
+
+    page_size = 15
+    can_view_details = True
+    create_modal = True
+    edit_modal = True
+    details_modal = True
+    can_export = True
+
+    column_searchable_list = ['name','note',]
+    column_filters = ['name', 'note',]
+    column_editable_list = ['name', 'note',]
+    column_list = ['name','note','creator',]
+    column_exclude_list = ['creator']
+    #column_labels = dict(cpu_cores='CPU Cores')
+    # sort by name, descending
+    column_default_sort = ('name', False)
+
+    form_excluded_columns = ('creator')
+
+    column_formatters = {
+        'note': _note_formatter,
+    }
+
+    form_widget_args = {
+        'name': {
+            'placeholder': 'run metric name',
+        },
+        'note': {
+            'placeholder': 'notes regarding run metric',
+        }
+    }
+
+    def on_model_change(self, form, model, is_created):
+
+        if is_created:
+            model.creator_id = current_user.id
+
 
 class ServerView(sqla.ModelView):
 
@@ -369,6 +422,33 @@ class TestResultStatusView(sqla.ModelView):
     }
 
 
+class TargetServerRunMetricForm(InlineFormAdmin):
+
+    def is_accessible(self):
+        return current_user.has_role('user')
+
+    form_columns = ('id', 'run_metric', 'value', 'note')
+    form_label = 'Metric'
+    column_labels = {'run_metric': 'Metric',}
+    form_widget_args = {
+        'run_metric': {
+            #'style': 'width: 33px',
+            'placeholder': 'run metric',
+            'title': 'select a run metric',
+        },
+        'value': {
+            #'style': 'width: 66px',
+            'placeholder': 'value for metric',
+            'title': 'enter a value for the metric\nfor example: if metric is CPU Max a value may be [99.9]',
+        },
+        'note': {
+            'style': 'height: 34px',
+            'placeholder': 'note for metric',
+            'title': 'enter a note for the metric value\nfor example: if metric is CPU Avg a note may be [average determined by prometheus monitoring]',
+        },
+    }
+
+
 class TestResultView(sqla.ModelView):
     #@expose('/tya/')
     #def index(self):
@@ -404,7 +484,6 @@ class TestResultView(sqla.ModelView):
         #~ form.run_by = 'admin'
         #form.process()
 
-
     # example to add extra row_actions
     #~ column_extra_row_actions = [
         #~ LinkRowAction('glyphicon glyphicon-off', 'http://direct.link/?id={row_id}'),
@@ -412,7 +491,10 @@ class TestResultView(sqla.ModelView):
         #~ #EndpointLinkRowAction('glyphicon glyphicon-on', 'testresult.index_view'),
     #~ ]
 
-    page_size = 15
+    #inline_models = (ServerRunMetric, )
+    inline_models = (TargetServerRunMetricForm(ServerRunMetric), )
+
+    page_size = 13
     can_set_page_size = True
     can_view_details = True
     create_modal = True
@@ -422,23 +504,24 @@ class TestResultView(sqla.ModelView):
 
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
-                      'target_server.name', 'run_by.name', 'loop_amount', 'status',
+                      'target_server.name', 'run_by.name', 'loop_amount', 'status', 'target_server_run_metrics.value',
                       #BaseSQLAFilter(column=TestResult.test_notes, name='XSource ServerX')
                      ]
     column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
-                            'number_failures', 'average_response_time', 'target_server_cpu', 'target_server_memory',
-                            'target_server_load', 'source_servers', 'target_server', 'status', 'loop_amount']
+                            'number_failures', 'average_response_time', 'source_servers', 'target_server',
+                            'status', 'loop_amount', ]
     column_list = ['test_date', 'test_plan', 'status', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
-                   'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time', 'target_server_cpu',
-                   'target_server_memory', 'target_server_load', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'creator',
+                   'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time',
+                   'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'target_server_run_metrics', 'creator',
+                   'target_server_cpu', 'target_server_memory', 'target_server_load',
                    ]
-    column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'test_notes', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'creator', 'run_by',]
+    column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'test_notes', 'prerun_notes', 'run_notes', 'postrun_notes',
+                           'failure_notes', 'creator', 'run_by', 'target_server_cpu', 'target_server_memory', 'target_server_load', ]
     column_labels = dict(source_servers='Sources', target_server='Target', number_users='#Users', number_failures='#Fail',
-                         average_response_time='ART', target_server_memory='Mem', target_server_load='Load',
-                         target_server_cpu='CPU', loop_amount='Loops',run_length='RunLen',
-                         prerun_notes='PreRun Notes', postrun_notes='PostRun Notes',
+                         average_response_time='ART', loop_amount='Loops',run_length='RunLen', prerun_notes='PreRun Notes',
+                         postrun_notes='PostRun Notes', target_server_run_metrics='Target SRM',
                          )
-    form_excluded_columns = ('created_at','creator_id', 'creator')
+    form_excluded_columns = ('created_at','creator_id', 'creator', 'target_server_cpu', 'target_server_memory', 'target_server_load', )
     # sort by test_date, descending
     column_default_sort = ('test_date', True)
     #column_default_sort = 'test_plan.name'
@@ -485,6 +568,9 @@ class TestResultView(sqla.ModelView):
         },
         'target_server_load': {
             'label': 'Load'
+        },
+        'target_server_run_metrics': {
+            'label': 'Target SRM'
         },
     }
 

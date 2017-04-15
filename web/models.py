@@ -64,6 +64,10 @@ server_testresults = db.Table('server_testresults',
                               db.Column('testresult_id', db.Integer(), db.ForeignKey('test_result.id')),
                               db.Column('server_id', db.Integer(), db.ForeignKey('server.id')))
 
+target_serverrunmetric_testresults = db.Table('target_serverrunmetric_testresults',
+                              db.Column('testresult_id', db.Integer(), db.ForeignKey('test_result.id')),
+                              db.Column('server_run_metric_id', db.Integer(), db.ForeignKey('server_run_metric.id')))
+
 class TestResult(db.Model):
     __tablename__ = 'test_result'
     id = db.Column(db.Integer, primary_key=True)
@@ -87,7 +91,7 @@ class TestResult(db.Model):
     app_version = db.Column(db.String(15), nullable=True)
     number_users = db.Column(db.Integer, nullable=False)
     ramp_up = db.Column(db.Integer, nullable=False)
-    loop_amount = db.Column(db.Integer, default=1, nullable=True)
+    loop_amount = db.Column(db.Integer, nullable=True)
 
     run_length = db.Column(db.Integer, nullable=True)
     number_failures = db.Column(db.Integer, nullable=True)
@@ -97,6 +101,10 @@ class TestResult(db.Model):
     target_server_cpu = db.Column(db.Numeric(5,2), nullable=True)
     target_server_memory = db.Column(db.Numeric(5,2), nullable=True)
     target_server_load = db.Column(db.Numeric(5,2), nullable=True)
+
+    # multiple occurring TargetServerRunMetrics
+    target_server_run_metrics = db.relationship('ServerRunMetric', secondary=target_serverrunmetric_testresults,
+                                     backref=db.backref('test_result', lazy='dynamic'))
 
     prerun_notes = db.Column(db.Text, nullable=True)
     run_notes = db.Column(db.Text, nullable=True)
@@ -110,6 +118,31 @@ class TestResult(db.Model):
 
     def __str__(self):
         return '%s (%s)' % (self.test_plan, self.test_date)
+
+
+class RunMetric(db.Model):
+    __tablename__ = 'run_metric'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(33), nullable=False)
+    note = db.Column(db.Text, nullable=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    creator = db.relationship("User", foreign_keys=[creator_id])
+
+    def __str__(self):
+        return '%s' % (self.name)
+
+
+class ServerRunMetric(db.Model):
+    __tablename__ = 'server_run_metric'
+    id = db.Column(db.Integer, primary_key=True)
+    run_metric_id = db.Column(db.Integer(), db.ForeignKey('run_metric.id'), nullable=False)
+    run_metric = db.relationship(RunMetric, foreign_keys=[run_metric_id])
+
+    value = db.Column(db.Numeric(5,2), nullable=False)
+    note = db.Column(db.Text, nullable=True)
+
+    def __str__(self):
+        return '%s:%s' % (self.run_metric, self.value)
 
 
 #
