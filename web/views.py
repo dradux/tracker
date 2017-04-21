@@ -511,7 +511,7 @@ class TestResultView(sqla.ModelView):
                      ]
     column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time', 'source_servers', 'target_server',
-                            'status', 'loop_amount', ]
+                            'status', 'loop_amount', 'test_notes', ]
     column_list = ['test_date', 'test_plan', 'status', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
                    'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time',
                    'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'target_server_run_metrics',
@@ -519,8 +519,8 @@ class TestResultView(sqla.ModelView):
                    ]
     column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'prerun_notes', 'run_notes', 'postrun_notes',
                            'failure_notes', 'target_server_run_metrics_url', 'creator', 'run_by', ]
-    column_labels = dict(source_servers='Sources', target_server='Target', number_users='#Users', number_failures='#Fail',
-                         average_response_time='ART', loop_amount='Loops',run_length='RunLen', prerun_notes='PreRun Notes',
+    column_labels = dict(source_servers='Source', target_server='Target', number_users='Users', number_failures='Fail',
+                         average_response_time='ART', loop_amount='Loops',run_length='Run Len', prerun_notes='PreRun Notes',
                          postrun_notes='PostRun Notes', target_server_run_metrics='Target SRM',
                          target_server_run_metrics_url='Target SRM URL',
                          )
@@ -546,30 +546,30 @@ class TestResultView(sqla.ModelView):
             # filter to only show 'active' servers
             'query_factory': lambda: Server.query.filter_by(active=True)
         },
-        'loop_amount': {
-            'label': 'Loops'
-        },
-        'number_users': {
-            'label': '# Users'
-        },
-        'number_failures': {
-            'label': '# Fail'
-        },
-        'number_requests': {
-            'label': '# Reqs'
-        },
-        'run_length': {
-            'label': 'Run Length'
-        },
-        'average_response_time': {
-            'label': 'ART'
-        },
-        'target_server_run_metrics': {
-            'label': 'Target SRM'
-        },
-        'target_server_run_metrics_url': {
-            'label': 'Target SRM URL'
-        },
+        #~ 'loop_amount': {
+            #~ 'label': 'Loops'
+        #~ },
+        #~ 'number_users': {
+            #~ 'label': '# Users'
+        #~ },
+        #~ 'number_failures': {
+            #~ 'label': '# Fail'
+        #~ },
+        #~ 'number_requests': {
+            #~ 'label': '# Reqs'
+        #~ },
+        #~ 'run_length': {
+            #~ 'label': 'Run Length'
+        #~ },
+        #~ 'average_response_time': {
+            #~ 'label': 'ART'
+        #~ },
+        #~ 'target_server_run_metrics': {
+            #~ 'label': 'Target SRM'
+        #~ },
+        #~ 'target_server_run_metrics_url': {
+            #~ 'label': 'Target SRM URL'
+        #~ },
     }
 
     form_widget_args = {
