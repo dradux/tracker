@@ -479,6 +479,8 @@ class TestResultView(sqla.ModelView):
         return Markup("%s" % (model.postrun_notes)) if model.postrun_notes else ""
     def _failure_notes_formatter(view, context, model, name):
         return Markup("%s" % (model.failure_notes)) if model.failure_notes else ""
+    def _target_server_run_metrics_url_formatter(view, context, model, name):
+        return Markup("<a href='%s'>%s</a>" % (model.target_server_run_metrics_url, model.target_server_run_metrics_url)) if model.target_server_run_metrics_url else ""
 
     #~ def on_form_prefill(self, form, id):
         #~ form.run_by = 'admin'
@@ -512,16 +514,17 @@ class TestResultView(sqla.ModelView):
                             'status', 'loop_amount', ]
     column_list = ['test_date', 'test_plan', 'status', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
                    'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time',
-                   'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'target_server_run_metrics', 'creator',
-                   'target_server_cpu', 'target_server_memory', 'target_server_load',
+                   'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'target_server_run_metrics',
+                   'target_server_run_metrics_url', 'creator',
                    ]
-    column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'test_notes', 'prerun_notes', 'run_notes', 'postrun_notes',
-                           'failure_notes', 'creator', 'run_by', 'target_server_cpu', 'target_server_memory', 'target_server_load', ]
+    column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'prerun_notes', 'run_notes', 'postrun_notes',
+                           'failure_notes', 'target_server_run_metrics_url', 'creator', 'run_by', ]
     column_labels = dict(source_servers='Sources', target_server='Target', number_users='#Users', number_failures='#Fail',
                          average_response_time='ART', loop_amount='Loops',run_length='RunLen', prerun_notes='PreRun Notes',
                          postrun_notes='PostRun Notes', target_server_run_metrics='Target SRM',
+                         target_server_run_metrics_url='Target SRM URL',
                          )
-    form_excluded_columns = ('created_at','creator_id', 'creator', 'target_server_cpu', 'target_server_memory', 'target_server_load', )
+    form_excluded_columns = ('created_at','creator_id', 'creator', )
     # sort by test_date, descending
     column_default_sort = ('test_date', True)
     #column_default_sort = 'test_plan.name'
@@ -535,6 +538,7 @@ class TestResultView(sqla.ModelView):
         'run_notes': _run_notes_formatter,
         'postrun_notes': _postrun_notes_formatter,
         'failure_notes': _failure_notes_formatter,
+        'target_server_run_metrics_url': _target_server_run_metrics_url_formatter,
     }
 
     form_args = {
@@ -560,17 +564,11 @@ class TestResultView(sqla.ModelView):
         'average_response_time': {
             'label': 'ART'
         },
-        'target_server_cpu': {
-            'label': 'CPU'
-        },
-        'target_server_memory': {
-            'label': 'Memory'
-        },
-        'target_server_load': {
-            'label': 'Load'
-        },
         'target_server_run_metrics': {
             'label': 'Target SRM'
+        },
+        'target_server_run_metrics_url': {
+            'label': 'Target SRM URL'
         },
     }
 
@@ -620,18 +618,6 @@ class TestResultView(sqla.ModelView):
             'placeholder': 'average response time (in milliseconds)',
             'title': 'average response time (in milliseconds)',
         },
-        'target_server_cpu': {
-            'placeholder': 'average cpu utilization on Target Server',
-            'title': 'average cpu utilization measured on Target Server during test\nplease take note of unusually high/low values',
-        },
-        'target_server_memory': {
-            'placeholder': 'average free memory (in gb) on Target Server',
-            'title': 'average free memory (in gb) measured on Target Server during test\nplease take note of unusually high/low values',
-        },
-        'target_server_load': {
-            'placeholder': 'average server load on Target Server',
-            'title': 'average server load measured on Target Server during test\nplease take note of unusually high/low values\nnote: this is the 1 minute load of top on target server',
-        },
         'run_by': {
             'placeholder': 'who the test was run by',
             'title': 'who ran the test',
@@ -655,6 +641,10 @@ class TestResultView(sqla.ModelView):
         'failure_notes': {
             'placeholder': 'notes related to test failure (format with html as needed)',
             'title': 'any notes related to the test run failure (e.g. error logs, stack dumps, etc.)\nthis field accepts html data',
+        },
+        'target_server_run_metrics': {
+            'placeholder': 'target SRM url)',
+            'title': 'link to the target server run metrics results (if applicable)\n e.g. link to prometheus date range for test',
         },
     }
 

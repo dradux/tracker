@@ -98,13 +98,10 @@ class TestResult(db.Model):
     number_requests = db.Column(db.Integer, nullable=True)
     average_response_time = db.Column(db.Integer, nullable=True)
 
-    target_server_cpu = db.Column(db.Numeric(5,2), nullable=True)
-    target_server_memory = db.Column(db.Numeric(5,2), nullable=True)
-    target_server_load = db.Column(db.Numeric(5,2), nullable=True)
-
     # multiple occurring TargetServerRunMetrics
     target_server_run_metrics = db.relationship('ServerRunMetric', secondary=target_serverrunmetric_testresults,
                                      backref=db.backref('test_result', lazy='dynamic'))
+    target_server_run_metrics_url = db.Column(db.String(1333), nullable=True)
 
     prerun_notes = db.Column(db.Text, nullable=True)
     run_notes = db.Column(db.Text, nullable=True)

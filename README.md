@@ -29,7 +29,6 @@ You now have two instances of TRacker, each completely separate from the other!
 - apply latest db updates: `docker-compose run web python manage.py db upgrade`
 
 
-
 ## Run
 - start: `docker-compose up`
 - use: `http://localhost`
