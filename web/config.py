@@ -23,6 +23,8 @@ class BaseConfig(object):
     DEFAULT_ADMIN_USER = os.environ['DEFAULT_ADMIN_USER']
     DEFAULT_ADMIN_PASSWORD = os.environ['DEFAULT_ADMIN_PASSWORD']
 
+    APPLICATION_ROOT = os.environ['APPLICATION_ROOT']
+
 class DefaultConfig(BaseConfig):
 
    # Statement for enabling the development environment

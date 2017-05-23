@@ -1,5 +1,6 @@
 *.db
 .DS_Store
+.todo.md
 venv
 env
 __pycache__
