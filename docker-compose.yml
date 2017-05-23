@@ -23,8 +23,8 @@ services:
     nginx:
       build:
         context: ./nginx/
-        args:
-          SERVER_URL: ${SERVER_URL}
+        #args:
+        #  SERVER_URL: ${SERVER_URL}
       ports:
         - "80:80"
         - "443:443"
