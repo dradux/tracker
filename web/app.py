@@ -1,10 +1,7 @@
 # app.py
 
-import sys
-import os
-import logging
+import sys, os, logging
 from logging.handlers import RotatingFileHandler
-
 import os.path as op
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -12,6 +9,7 @@ from flask.ext.security import login_required, Security, SQLAlchemyUserDatastore
 import flask_admin as admin
 from config import BaseConfig
 import config as Config
+from werkzeug.contrib.fixers import ProxyFix
 
 # Create application
 app = Flask(__name__)
@@ -91,6 +89,8 @@ admin.add_link(LoginMenuLink(name='Login', category='', url="/login?next=/admin/
 admin.add_view(OnlineHelpView(name='Online Help', endpoint='online_help', category='Help'))
 admin.add_view(AboutView(name='About', endpoint='help_about', category='Help'))
 
+#proxyfix in case you are running your site on a non-standard port/proxying.
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
 if __name__ == '__main__':
     app_dir = op.realpath(os.path.dirname(__file__))
