@@ -3,7 +3,7 @@
     <h3>Welcome to TRacker</h3>
     <div style="font-style: italic; ">
         {% if not current_user.id %}
-            You can't do a lot with this app without <a href="/">logging in</a>...
+            You can't do a lot with this app without <a href="/login?next=/admin/">logging in</a>...
         {% endif %}
     </div>
     <br />

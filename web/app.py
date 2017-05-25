@@ -84,7 +84,7 @@ admin.add_view(UserAdmin(User, db.session, name='Users', category='Config'))
 #admin.add_view(AccountLogoutView(name='Logout', endpoint='account_logout', category='Account'))
 admin.add_view(AccountView(name='User', endpoint='account_user', category='Account'))
 admin.add_link(LogoutMenuLink(name='Logout', category='', url="/logout"))
-admin.add_link(LoginMenuLink(name='Login', category='', url="/login"))
+admin.add_link(LoginMenuLink(name='Login', category='', url="/login?next=/admin/"))
 
 
 
