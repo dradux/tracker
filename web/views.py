@@ -279,6 +279,47 @@ class ServerView(sqla.ModelView):
             model.creator_id = current_user.id
 
 
+class TagView(sqla.ModelView):
+
+    # require user role.
+    def is_accessible(self):
+        return current_user.has_role('user')
+
+    def _handle_view(self, name,**kwargs):
+        if current_user.has_role('admin'):
+            self.can_delete = True
+        else:
+            self.can_delete = False
+
+    page_size = 20
+    can_view_details = False
+    create_modal = True
+    edit_modal = True
+    #details_modal = True
+    can_export = True
+
+    column_searchable_list = [ 'name', ]
+    column_filters = [ 'name', ]
+    column_editable_list = ['name', ]
+    column_list = ['name', ]
+    column_exclude_list = [ 'creator', 'test_result' ]
+    # sort by name, descending
+    column_default_sort = ('name', False)
+
+    form_excluded_columns = ('creator', 'test_result' )
+
+    form_widget_args = {
+        'name': {
+            'placeholder': 'tag name',
+        },
+    }
+
+    def on_model_change(self, form, model, is_created):
+
+        if is_created:
+            model.creator_id = current_user.id
+
+
 class TestPlanView(sqla.ModelView):
 
     # require user role.
@@ -507,13 +548,14 @@ class TestResultView(sqla.ModelView):
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
                       'target_server.name', 'run_by.name', 'loop_amount', 'status', 'target_server_run_metrics.value',
-                      'target_server_quantity',
+                      'target_server_quantity', 'tags.name',
                       #BaseSQLAFilter(column=TestResult.test_notes, name='XSource ServerX')
                      ]
-    column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
+    column_editable_list = [ 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time', 'source_servers', 'target_server',
-                            'status', 'loop_amount', 'test_notes', 'target_server_quantity', ]
-    column_list = [ 'test_date', 'test_plan', 'status', 'run_by', 'source_servers', 'target_server', 'target_server_quantity',
+                            'status', 'loop_amount', 'test_notes', 'target_server_quantity', 'tags',
+                            ]
+    column_list = [ 'test_date', 'test_plan', 'status', 'tags', 'run_by', 'source_servers', 'target_server', 'target_server_quantity',
                    'app_version', 'number_users', 'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests',
                    'average_response_time', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes',
                    'target_server_run_metrics', 'target_server_run_metrics_url', 'creator',
@@ -524,7 +566,7 @@ class TestResultView(sqla.ModelView):
                          number_users='Users', number_failures='Fail',
                          average_response_time='ART', loop_amount='Loops',run_length='Run Len', prerun_notes='PreRun Notes',
                          postrun_notes='PostRun Notes', target_server_run_metrics='Target SRM',
-                         target_server_run_metrics_url='Target SRM URL',
+                         target_server_run_metrics_url='Target SRM URL', tags='Tags',
                          )
     form_excluded_columns = ('created_at','creator_id', 'creator', )
     # sort by test_date, descending
@@ -649,8 +691,12 @@ class TestResultView(sqla.ModelView):
             'title': 'any notes related to the test run failure (e.g. error logs, stack dumps, etc.)\nthis field accepts html data',
         },
         'target_server_run_metrics': {
-            'placeholder': 'target SRM url)',
+            'placeholder': 'target SRM url',
             'title': 'link to the target server run metrics results (if applicable)\n e.g. link to prometheus date range for test',
+        },
+        'tags': {
+            'placeholder': 'tag(s) of the run result',
+            'title': 'any applicable tags for the run result',
         },
     }
 

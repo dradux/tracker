@@ -76,6 +76,7 @@ admin.add_view(TestResultView(TestResult, db.session, name='Test Results'))
 admin.add_view(RunMetricView(RunMetric, db.session, name='Run Metrics', category='Config'))
 admin.add_view(ServerView(Server, db.session, name='Servers', category='Config'))
 admin.add_view(TestResultStatusView(TestResultStatus, db.session, name='Statuses', category='Config'))
+admin.add_view(TagView(Tag, db.session, name='Tags', category='Config'))
 admin.add_view(TestPlanView(TestPlan, db.session, name='Test Plans', category='Config'))
 admin.add_view(UserAdmin(User, db.session, name='Users', category='Config'))
 

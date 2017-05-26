@@ -40,6 +40,18 @@ class Server(db.Model):
         return '%s %s' % (self.name, fmt_version)
 
 
+class Tag(db.Model):
+    __tablename__ = 'tag'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False)
+
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    creator = db.relationship("User", foreign_keys=[creator_id])
+
+    def __str__(self):
+        return '%s' % (self.name)
+
+
 class TestPlan(db.Model):
     __tablename__ = 'test_plan'
     id = db.Column(db.Integer, primary_key=True)
@@ -67,6 +79,9 @@ server_testresults = db.Table('server_testresults',
 target_serverrunmetric_testresults = db.Table('target_serverrunmetric_testresults',
                               db.Column('testresult_id', db.Integer(), db.ForeignKey('test_result.id')),
                               db.Column('server_run_metric_id', db.Integer(), db.ForeignKey('server_run_metric.id')))
+tag_testresults = db.Table('tag_testresults',
+                              db.Column('testresult_id', db.Integer(), db.ForeignKey('test_result.id')),
+                              db.Column('tag_id', db.Integer(), db.ForeignKey('tag.id')))
 
 class TestResult(db.Model):
     __tablename__ = 'test_result'
@@ -109,6 +124,9 @@ class TestResult(db.Model):
     postrun_notes = db.Column(db.Text, nullable=True)
     failure_notes = db.Column(db.Text, nullable=True)
     test_notes = db.Column(db.Text, nullable=True)
+
+    tags = db.relationship('Tag', secondary=tag_testresults,
+                                 backref=db.backref('test_result', lazy='dynamic'))
 
     created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
