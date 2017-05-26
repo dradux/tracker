@@ -84,6 +84,7 @@ class TestResult(db.Model):
 
     target_server_id = db.Column(db.Integer(), db.ForeignKey('server.id'), nullable=False)
     target_server = db.relationship(Server, foreign_keys=[target_server_id])
+    target_server_quantity = db.Column(db.String(10), nullable=True, default='1')
 
     run_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     run_by = db.relationship("User", foreign_keys=[run_by_id])

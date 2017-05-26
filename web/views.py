@@ -507,19 +507,21 @@ class TestResultView(sqla.ModelView):
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
                       'target_server.name', 'run_by.name', 'loop_amount', 'status', 'target_server_run_metrics.value',
+                      'target_server_quantity',
                       #BaseSQLAFilter(column=TestResult.test_notes, name='XSource ServerX')
                      ]
     column_editable_list = ['target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time', 'source_servers', 'target_server',
-                            'status', 'loop_amount', 'test_notes', ]
-    column_list = ['test_date', 'test_plan', 'status', 'run_by', 'source_servers', 'target_server', 'app_version', 'number_users',
-                   'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests', 'average_response_time',
-                   'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes', 'target_server_run_metrics',
-                   'target_server_run_metrics_url', 'creator',
+                            'status', 'loop_amount', 'test_notes', 'target_server_quantity', ]
+    column_list = [ 'test_date', 'test_plan', 'status', 'run_by', 'source_servers', 'target_server', 'target_server_quantity',
+                   'app_version', 'number_users', 'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests',
+                   'average_response_time', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes',
+                   'target_server_run_metrics', 'target_server_run_metrics_url', 'creator',
                    ]
     column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'prerun_notes', 'run_notes', 'postrun_notes',
                            'failure_notes', 'target_server_run_metrics_url', 'creator', 'run_by', ]
-    column_labels = dict(source_servers='Source', target_server='Target', number_users='Users', number_failures='Fail',
+    column_labels = dict(source_servers='Source', target_server='Target', target_server_quantity='Target Qty',
+                         number_users='Users', number_failures='Fail',
                          average_response_time='ART', loop_amount='Loops',run_length='Run Len', prerun_notes='PreRun Notes',
                          postrun_notes='PostRun Notes', target_server_run_metrics='Target SRM',
                          target_server_run_metrics_url='Target SRM URL',
@@ -584,6 +586,10 @@ class TestResultView(sqla.ModelView):
         'target_server': {
             'placeholder': 'target server',
             'title': 'select the server that the test was ran against\nplease use the notes field to describe any unusual target server info',
+        },
+        'target_server_quantity': {
+            'placeholder': 'target server quantity',
+            'title': 'enter the number of target server instances running for test (use range for autoscaling)',
         },
         'test_date': {
             'placeholder': 'date/time test was started',
