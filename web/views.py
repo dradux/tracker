@@ -8,6 +8,7 @@ from wtforms import validators
 from wtforms.fields import PasswordField
 from flask.ext.admin.menu import MenuLink
 from flask_admin.model.form import InlineFormAdmin
+#from flask_admin.model import BaseModelView
 
 from jinja2 import Markup
 from flask import url_for
@@ -491,6 +492,7 @@ class TargetServerRunMetricForm(InlineFormAdmin):
 
 
 class TestResultView(sqla.ModelView):
+#class TestResultView(BaseModelView):
     #@expose('/tya/')
     #def index(self):
     #    return self.render('help-about.html')
@@ -540,8 +542,8 @@ class TestResultView(sqla.ModelView):
     page_size = 13
     can_set_page_size = True
     can_view_details = True
-    create_modal = True
-    edit_modal = True
+    create_modal = False
+    edit_modal = False
     details_modal = True
     can_export = True
 
@@ -563,15 +565,28 @@ class TestResultView(sqla.ModelView):
     column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'prerun_notes', 'run_notes', 'postrun_notes',
                            'failure_notes', 'target_server_run_metrics_url', 'creator', 'run_by', ]
     column_labels = dict(source_servers='Source', target_server='Target', target_server_quantity='Target Qty',
-                         number_users='Users', number_failures='Fail',
-                         average_response_time='ART', loop_amount='Loops',run_length='Run Len', prerun_notes='PreRun Notes',
+                         number_users='Users', number_failures='Fail', test_date='Date',
+                         average_response_time='ART', loop_amount='Loops',run_length='Run Len',
+                         prerun_notes='PreRun Notes', test_plan='Test', number_requests='#Reqs',
                          postrun_notes='PostRun Notes', target_server_run_metrics='Target SRM',
                          target_server_run_metrics_url='Target SRM URL', tags='Tags',
+                         test_notes='Notes',
                          )
+    form_columns = ('test_date', 'status', 'test_plan', 'run_by', 'source_servers', 'target_server',
+                    'target_server_quantity', 'number_users', 'ramp_up', 'loop_amount', 'app_version',
+                    'run_length', 'number_failures', 'number_requests', 'average_response_time',
+                    'target_server_run_metrics_url', 'prerun_notes', 'run_notes', 'postrun_notes',
+                    'failure_notes', 'test_notes', 'target_server_run_metrics', 'tags',
+                   )
     form_excluded_columns = ('created_at','creator_id', 'creator', )
     # sort by test_date, descending
     column_default_sort = ('test_date', True)
     #column_default_sort = 'test_plan.name'
+
+    # the following is Flask-AppBuilder syntax
+    #~ add_fieldsets = [
+        #~ ('Summary', {'fields':['test_date','status','test_plan','run_by']})
+    #~ ]
 
     #column_formatters = dict(target_server='target_server.name')
     column_formatters = {
