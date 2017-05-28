@@ -14,7 +14,7 @@ from jinja2 import Markup
 from flask import url_for
 
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter, FilterEqual, BooleanEqualFilter
-from models import Server, TestResult, ServerRunMetric
+from models import Server, TestPlan, TestResult, ServerRunMetric, User
 
 # custom filter for Server: only active servers.
 #~ class FilterActiveServer(BaseSQLAFilter):
@@ -601,10 +601,22 @@ class TestResultView(sqla.ModelView):
     }
 
     form_args = {
+        'source_servers': {
+            # filter to only show 'active' servers
+            'query_factory': lambda: Server.query.filter_by(active=True).order_by(Server.name)
+        },
         'target_server': {
             # filter to only show 'active' servers
-            'query_factory': lambda: Server.query.filter_by(active=True)
+            'query_factory': lambda: Server.query.filter_by(active=True).order_by(Server.name)
         },
+        'run_by': {
+            # order list by name.
+            'query_factory': lambda: User.query.order_by(User.name)
+        },
+        'test_plan': {
+            # order list by name.
+            'query_factory': lambda: TestPlan.query.order_by(TestPlan.name)
+        }
         #~ 'loop_amount': {
             #~ 'label': 'Loops'
         #~ },

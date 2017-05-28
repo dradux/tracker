@@ -1,5 +1,8 @@
 # models.py
+
+from datetime import timedelta
 import datetime
+
 from app import db
 from flask.ext.security import UserMixin, RoleMixin
 
@@ -86,7 +89,7 @@ tag_testresults = db.Table('tag_testresults',
 class TestResult(db.Model):
     __tablename__ = 'test_result'
     id = db.Column(db.Integer, primary_key=True)
-    test_date = db.Column(db.DateTime, nullable=False)
+    test_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow() - timedelta(seconds=30))
     status_id = db.Column(db.Integer(), db.ForeignKey('test_result_status.id'), nullable=True)
     status = db.relationship("TestResultStatus", foreign_keys=[status_id])
 
