@@ -1,0 +1,94 @@
+#content {
+    background: white;
+/*
+    border: 1px solid #CCC;
+    padding: 12px;
+    overflow: scroll;
+*/
+}
+
+#brand {
+    float: left;
+    font-weight: 300;
+    margin: 0;
+    display: none;   /* hide the view/page title */
+}
+
+.search-form {
+    margin: 0 5px;
+}
+
+.search-form form {
+    margin: 0;
+}
+
+.btn-menu {
+    margin: 4px 5px 0 0;
+    float: right;
+}
+
+.btn-menu a, .btn-menu input {
+    padding: 7px 16px !important;
+    border-radius: 0 !important;
+}
+
+.btn, textarea, input[type], button, .model-list {
+    border-radius: 0;
+}
+
+.model-list {
+    border-radius: 0;
+}
+
+.nav-pills li > a {
+    border-radius: 0;
+}
+
+.select2-container .select2-choice {
+    border-radius: 0;
+}
+
+/*
+ * drad customizations
+ */
+
+body {
+    margin: 0;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: white;
+}
+
+/*
+.span10 {
+    margin-top: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 30px;
+}
+*/
+
+.container {
+/*
+    width: 99%;
+    height: 99%;
+*/
+    background: white;
+}
+
+input {
+    width: 98%;
+}
+
+select {
+    width: 99.3%;
+}
+
+textarea {
+    width: 98%;
+}
+
+.col-target_server_run_metrics {
+  min-width: 125px;
+}

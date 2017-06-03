@@ -68,7 +68,7 @@ def change_password():
     return render_template('security/change_password.html')
 
 # Create admin
-admin = admin.Admin(app, name='TRacker', template_mode='bootstrap3', index_view=HomeView(name='Home'))
+admin = admin.Admin(app, name='TRacker', base_template='layout.html', index_view=HomeView(name='Home'))
 
 # Add views
 admin.add_view(TestResultView(TestResult, db.session, name='Test Results'))
