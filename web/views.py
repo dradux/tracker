@@ -549,21 +549,21 @@ class TestResultView(sqla.ModelView):
 
     column_searchable_list = ['test_plan.name', 'test_notes']
     column_filters = ['test_plan.name', 'test_date', 'number_users', 'run_length', 'number_failures', 'average_response_time',
-                      'target_server.name', 'run_by.name', 'loop_amount', 'status', 'target_server_run_metrics.value',
+                      'target_server.name', 'run_by.name', 'status', 'target_server_run_metrics.value',
                       'target_server_quantity', 'tags.name',
                       #BaseSQLAFilter(column=TestResult.test_notes, name='XSource ServerX')
                      ]
     column_editable_list = [ 'target_server_id', 'test_date', 'test_plan', 'number_users', 'run_length',
                             'number_failures', 'average_response_time', 'source_servers', 'target_server',
-                            'status', 'loop_amount', 'test_notes', 'target_server_quantity', 'tags',
+                            'status', 'test_notes', 'target_server_quantity', 'tags', 'app_version',
                             ]
     column_list = [ 'test_date', 'test_plan', 'status', 'tags', 'run_by', 'source_servers', 'target_server', 'target_server_quantity',
                    'app_version', 'number_users', 'ramp_up', 'loop_amount', 'run_length', 'number_failures', 'number_requests',
                    'average_response_time', 'prerun_notes', 'run_notes', 'postrun_notes', 'failure_notes', 'test_notes',
                    'target_server_run_metrics', 'target_server_run_metrics_url', 'creator',
                    ]
-    column_exclude_list = ['app_version', 'ramp_up', 'number_requests', 'prerun_notes', 'run_notes', 'postrun_notes',
-                           'failure_notes', 'target_server_run_metrics_url', 'creator', 'run_by', ]
+    column_exclude_list = ['ramp_up', 'number_requests', 'prerun_notes', 'run_notes', 'postrun_notes',
+                           'failure_notes', 'target_server_run_metrics_url', 'creator', 'run_by', 'loop_amount', ]
     column_labels = dict(source_servers='Source', target_server='Target', target_server_quantity='Target Qty',
                          number_users='Users', number_failures='Fail', test_date='Date',
                          average_response_time='ART', loop_amount='Loops',run_length='Run Len',
@@ -572,11 +572,11 @@ class TestResultView(sqla.ModelView):
                          target_server_run_metrics_url='Target SRM URL', tags='Tags',
                          test_notes='Notes',
                          )
-    form_columns = ('test_date', 'status', 'test_plan', 'run_by', 'source_servers', 'target_server',
+    form_columns = ('status', 'test_plan', 'run_by', 'source_servers', 'target_server',
                     'target_server_quantity', 'number_users', 'ramp_up', 'loop_amount', 'app_version',
                     'run_length', 'number_failures', 'number_requests', 'average_response_time',
                     'target_server_run_metrics_url', 'prerun_notes', 'run_notes', 'postrun_notes',
-                    'failure_notes', 'test_notes', 'target_server_run_metrics', 'tags',
+                    'failure_notes', 'test_notes', 'target_server_run_metrics', 'tags', 'test_date',
                    )
     form_excluded_columns = ('created_at','creator_id', 'creator', )
     # sort by test_date, descending
@@ -616,7 +616,10 @@ class TestResultView(sqla.ModelView):
         'test_plan': {
             # order list by name.
             'query_factory': lambda: TestPlan.query.order_by(TestPlan.name)
-        }
+        },
+        'test_date': {
+            'format': '%Y/%m/%d %H:%M:%S', # changes how the input is parsed by strptime (e.g. 2017/07/22 11:47:58).
+        },
         #~ 'loop_amount': {
             #~ 'label': 'Loops'
         #~ },
@@ -661,7 +664,10 @@ class TestResultView(sqla.ModelView):
             'title': 'enter the number of target server instances running for test (use range for autoscaling)',
         },
         'test_date': {
-            'placeholder': 'date/time test was started',
+            'placeholder': 'date/time test was started (format: YYYY/MM/DD HH:mm:ss)',
+            'data-date-format': u'YYYY/MM/DD HH:mm:ss',   # changes how the DateTimeField displays the time
+            'data-role': '',   # prevent the datepicker from displaying as it causes more problems than it is worth.
+
         },
         'loop_amount': {
             'placeholder': '# of loops',

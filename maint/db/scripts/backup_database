@@ -1,7 +1,8 @@
 #!/bin/bash
 # 2017-03-18 : drad
 # hourly/daily backup of database via pg_dumpall (default to hourly).
-# note: to restore dump use something like: xzcat backups/psql.bak.xz | psql db
+# note: to restore dump use something like the following:
+#       xzcat backups/psql.bak.xz | xzcat Sat-tracker-full-db-0000.dmp.xz | psql --host=172.20.0.2 --port=5432 --username=postgres postgres
 
 daily="$1"          # use 'daily' to trigger daily backup.
 s3enabled="false"   # true|false: if enabled backup is copied to s3 bucket.

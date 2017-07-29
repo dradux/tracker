@@ -3,7 +3,7 @@ FROM alpine:edge
 MAINTAINER drad <drader@adercon.com>
 
 # NOTICE: only needed for development (bash access) only
-RUN apk add --no-cache bash
+#RUN apk add --no-cache bash
 
 # install postgresql to get pg_dumpall
 RUN apk add --no-cache postgresql xz

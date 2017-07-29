@@ -8,7 +8,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # NOTE: the following is only needed for develop/debug purposes
-RUN apk add --no-cache bash
+#RUN apk add --no-cache bash
 
 # the following are needed to build psycopg2
 RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev
