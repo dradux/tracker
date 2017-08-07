@@ -19,8 +19,8 @@ class Server(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(13), nullable=False)
     full_name = db.Column(db.String(100), nullable=True)
-    version = db.Column(db.Integer, nullable=True)
     active = db.Column(db.Boolean, nullable=True, default=True)
+    version = db.Column(db.Integer, nullable=True)
     cpu_cores = db.Column(db.Integer, nullable=False)
     compute_units = db.Column(db.Numeric(5,1), nullable=True)
     memory = db.Column(db.Numeric(5,1), nullable=False)
@@ -58,6 +58,7 @@ class TestPlan(db.Model):
     __tablename__ = 'test_plan'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    active = db.Column(db.Boolean, nullable=True, default=True)
     version = db.Column(db.String(10), nullable=False)
     source_url = db.Column(db.String, nullable=False)
     summary = db.Column(db.Text, nullable=False)
