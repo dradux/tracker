@@ -17,7 +17,7 @@ class TestResultStatus(db.Model):
 class Server(db.Model):
     __tablename__ = 'server'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(13), nullable=False)
+    name = db.Column(db.String(20), nullable=False)
     full_name = db.Column(db.String(100), nullable=True)
     active = db.Column(db.Boolean, nullable=True, default=True)
     version = db.Column(db.Integer, nullable=True)
@@ -107,7 +107,7 @@ class TestResult(db.Model):
     run_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     run_by = db.relationship("User", foreign_keys=[run_by_id])
 
-    app_version = db.Column(db.String(15), nullable=True)
+    app_version = db.Column(db.String(25), nullable=True)
     number_users = db.Column(db.Integer, nullable=False)
     ramp_up = db.Column(db.Integer, nullable=False)
     loop_amount = db.Column(db.Integer, nullable=True)
